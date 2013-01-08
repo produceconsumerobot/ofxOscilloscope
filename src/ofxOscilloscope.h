@@ -13,44 +13,6 @@
 
 #include "ofMain.h"
 
-/*
-class ofxScopeData {
-private:
-	float ** data;
-	//float data[10][10];
-	int _nData;
-	int _nVar;
-public:
-	ofxScopeData();
-	ofxScopeData(int nData, int nVar);
-	~ofxScopeData();
-	//float& operator[][](int x,int y);
-	//float& operator[](int dataInd);
-	//float** operator()();
-	float& operator()(int dataInd, int varInd) {
-		return data[dataInd][varInd];
-	}
-	//float** operator()() {return data;}
-/*
-	float& at(int row, int col) {return data[row][col];}
-	float** operator()() {return data;}
-
-	class R
-    {
-         private:
-             friend class ofxScopeData; // Only ofxScopeData can create these objects.
-             R(ofxScopeData& parent, int row): m_parent(parent), m_row(row) {}
-         public:
-              float& operator[](int col) {return m_parent.at(m_row, col);}
-         private:
-              ofxScopeData&  m_parent;
-              int m_row;
-    };
-
-    R operator[](int row) {return R(*this,row);}
-
-};
-*/
 
 
 /*-------------------------------------------------
@@ -77,6 +39,7 @@ public:
 		ofPoint min, ofPoint max, float yScale=1.0, float yOffset=0.0);
 	void setVariableColors(ofColor colors[], int nColors);
 	void updateData(float ** data, int nPoints); // data[_nVariables][nPoints]
+	void updateData(std::vector<std::vector<float>> &data, int nPoints);
 	void plot();
 
 	int getNumVariables();
@@ -104,6 +67,7 @@ public:
 	void setVariableNames(string variableNames[], int nVariables);
 	void setVariableColors(ofColor colors[], int nColors);
 	void updateData(float ** data, int nPoints); // data[_nVariables][nPoints]
+	void updateData(std::vector<std::vector<float>> &data, int nPoints);
 	//void updateData(ofxScopeData data, int nPoints); // data[_nVariables][nPoints]
 	void plot();
 	void setTimeWindow(float timeWindow);
@@ -129,59 +93,3 @@ public:
 };
 
 #endif
-
-/*
-class ofxScopeArray {
-private:
-	friend class ofxScopeData;
-	int _nVar;
-	float * data;
-	ofxScopeData&  d_parent;
-	int _d_row;
-
-	ofxScopeArray(ofxScopeData& parent, int v_col): d_parent(parent), _d_row(v_col) {}
-
-public:
-	ofxScopeArray();
-	ofxScopeArray(int nData, int nVar);
-	~ofxScopeArray();
-	//float& operator[][](int x,int y);
-	float& operator[](int varInd);
-	//float** operator()();
-};
-
-
-class ofxScopeData {
-private:
-	ofxScopeArray scopeArray;
-	int _nData;
-
-public:
-	ofxScopeData();
-	ofxScopeData(int nData, int nVar);
-	~ofxScopeData();
-	//float& operator[][](int x,int y);
-	float& operator[](int dataInd);
-	//float** operator()();
-
-};
-*/
-
-/*
-class ofxScopeData {
-private:
-	float ** data;
-	int _nData;
-	int _nVar;
-public:
-	ofxScopeData();
-	ofxScopeData(int nData, int nVar);
-	~ofxScopeData();
-	//float& operator[][](int x,int y);
-	float& operator[](int dataInd);
-	//float** operator()();
-
-};
-*/
-
-

@@ -17,11 +17,7 @@ void testApp::setup(){
 	for (int i=0; i<nScopes; i++) {
 		scopeWin.scopes[i].setup(5, (i+1)*100, names, colors, nVariables, 1., 0.);
 	}
-
-	data = new float*[nVariables];
-	for (int i=0; i<nVariables; i++) {
-		data[i] = new float[newPoints];
-	}
+	data.resize(nVariables, vector<float>(newPoints, 0));
 
 	zeroData = false;
 	counter = 0;
@@ -62,10 +58,6 @@ void testApp::draw(){
 //--------------------------------------------------------------
 void testApp::exit(){
 	printf("exit()");
-	for (int i=0; i<nVariables; i++) {
-		delete data[i];
-	}
-	delete data;
 }
 
 //--------------------------------------------------------------

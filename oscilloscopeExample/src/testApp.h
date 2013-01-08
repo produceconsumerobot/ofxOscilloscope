@@ -24,7 +24,7 @@ class testApp : public ofBaseApp{
 		int newPoints;
 		int nVariables;
 		int nScopes;
-		float ** data;
+		std::vector<std::vector<float>> data;
 		bool zeroData;
 		int counter;
 		int counter2;

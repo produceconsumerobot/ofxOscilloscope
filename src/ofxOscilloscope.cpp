@@ -55,6 +55,23 @@ void ofxScopePlot::setup(float timeWindow, int sampFreq, ofColor variableColors[
 }
 // updateData
 // data[_nVariables][nPoints]
+void ofxScopePlot::updateData(std::vector<std::vector<float>> &data, int nPoints) {
+		for (int i=0; i<_nVariables; i++) {
+		// Shift the data in buffer
+		for (int j=(_pointsPerWin-1); j>(nPoints-1); j--) {
+			int cpPoint = j-(nPoints);
+			_buffer[i][j] = _buffer[i][cpPoint];
+			//printf("%i,%i; ",j, cpPoint);
+		}
+		//printf("\n");
+		// Copy new data into the beginning of the buffer
+		for (int j=0; j<nPoints; j++) {
+			_buffer[i][nPoints-1-j] = data[i][j];
+			//printf("%i,",j);
+		}
+	}
+}
+
 void ofxScopePlot::updateData(float ** data, int nPoints) {
 	for (int i=0; i<_nVariables; i++) {
 		// Shift the data in buffer
@@ -202,8 +219,11 @@ void ofxOscilloscope::setVariableColors(ofColor colors[], int nColors){
 void ofxOscilloscope::updateData(float ** data, int nPoints) {
 	_scope.updateData(data, nPoints);
 }
-//void ofxOscilloscope::updateData(ofxScopeData data, int nPoints) {
-	//updateData(data(), nPoints);
+void ofxOscilloscope::updateData(std::vector<std::vector<float>> &data, int nPoints) {
+	_scope.updateData(data, nPoints);
+}
+//void ofxOscilloscope::updateData(std::vector<std::vector<float>> data, int nPoints) {
+//	updateData((float **) data, nPoints);
 //}
 void ofxOscilloscope::plot(){
 	for (int i=0; i<_scope.getNumVariables(); i++) {
@@ -276,122 +296,3 @@ void ofxMultiScope::plot() {
 		scopes[i].plot();
 	}
 }
-
-/*
-
-ofxScopeArray::ofxScopeArray() {
-	data = NULL;
-	_nData = 0;
-	_nVar = 0;
-}
-
-ofxScopeArray::ofxScopeArray(int nData, int nVar) {
-	_nData = nData;
-	_nVar = nVar;
-
-	data = new float*[_nVar];
-	for (int i=0; i<_nVar; i++) {
-		data[i] = new float[_nData];
-	}
-}
-
-ofxScopeArray::ofxScopeArray() {
-	for (int i=0; i<_nVar; i++) {
-		delete data[i];
-	}
-	if (_nVar > 1) {
-	delete data;
-	}
-}
-
-float& ofxScopeArray::operator[](int varInd)  {
-	if ((x >= _nData) || (y >= _nVar)) {
-		fprintf(stderr, "Index exceeds ofxScopeArray dims");
-		//return NULL;
-	}  else {
-		return data[x][y];
-	}
-	
-}
-
-
-float& ofxScopeData::operator[](const int x, const int y)  {
-	if ((x >= _nData) || (y >= _nVar)) {
-		fprintf(stderr, "Index exceeds ofxScopeArray dims");
-		//return NULL;
-	}  else {
-		return data[x][y];
-	}
-	
-}
-
-ofxScopeData::ofxScopeData() {
-	data = NULL;
-	_nData = 0;
-	_nVar = 0;
-}
-
-ofxScopeData::ofxScopeData(int nData, int nVar) {
-	_nData = nData;
-	_nVar = nVar;
-
-	data = new float*[_nVar];
-	for (int i=0; i<_nVar; i++) {
-		data[i] = new float[_nData];
-	}
-}
-
-ofxScopeData::ofxScopeData() {
-	for (int i=0; i<_nVar; i++) {
-		delete data[i];
-	}
-	if (_nVar > 1) {
-	delete data;
-	}
-}
-*/
-
-/*
-float& ofxScopeData::operator[](const int x, const int y)  {
-	if ((x >= _nData) || (y >= _nVar)) {
-		fprintf(stderr, "Index exceeds ofxScopeArray dims");
-		//return NULL;
-	}  else {
-		return data[x][y];
-	}
-	
-}
-*/
-
-/*
-ofxScopeData::ofxScopeData() {
-	//data = NULL;
-	_nData = 0;
-	_nVar = 0;
-}
-
-ofxScopeData::ofxScopeData(int nData, int nVar) {
-	
-	_nData = nData;
-	_nVar = nVar;
-
-	data = new float*[_nData];
-	for (int i=0; i<_nData; i++) {
-		data[i] = new float[_nVar];
-	}
-	
-}
-
-ofxScopeData::~ofxScopeData() {
-	for (int i=0; i<_nData; i++) {
-		delete data[i];
-	}
-	if (_nData > 1) {
-	delete data;
-	}
-}
-*/
-
-//float** ofxScopeData::operator()()  {
-//	return data;
-//}
