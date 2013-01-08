@@ -81,7 +81,7 @@
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat />
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;src\oscilloscope;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;..\..\..\addons\ofxOscilloscope\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
