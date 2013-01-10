@@ -73,6 +73,9 @@ void ofxScopePlot::updateData(std::vector<std::vector<float>> &data, int nPoints
 }
 
 void ofxScopePlot::updateData(float ** data, int nPoints) {
+#ifdef DEBUG_PRINT
+	printf("ofxScopePlot::updateData\n"); 
+#endif
 	for (int i=0; i<_nVariables; i++) {
 		// Shift the data in buffer
 		for (int j=(_pointsPerWin-1); j>(nPoints-1); j--) {
@@ -220,6 +223,9 @@ void ofxOscilloscope::updateData(float ** data, int nPoints) {
 	_scope.updateData(data, nPoints);
 }
 void ofxOscilloscope::updateData(std::vector<std::vector<float>> &data, int nPoints) {
+#ifdef DEBUG_PRINT
+	printf("ofxOscilloscope::updateData\n"); 
+#endif
 	_scope.updateData(data, nPoints);
 }
 //void ofxOscilloscope::updateData(std::vector<std::vector<float>> data, int nPoints) {
