@@ -4,19 +4,26 @@
 void testApp::setup(){
 	ofBackground(255,255,255);
 
-	nVariables = 2;
+	const int nVariables = 2;
 	newPoints = 23;
 	
-	ofColor colors[2] = {ofColor(0,0,0), ofColor(255,0,0)};
+	ofColor colors[nVariables] = {ofColor(0,0,0), ofColor(255,0,0)};
+	std::vector<ofColor> vec_colors(colors, colors + nVariables);
+
 	string names[2] = {"happy", "joy"};
+	std::vector<string> vec_names(names, names + nVariables);
 
 	nScopes = 5;
 	min = ofPoint(0., 0.);
 	max = ofPoint(ofGetWindowSize().x, ofGetWindowSize().y);
 	scopeWin = ofxMultiScope(nScopes, min, max);
+
 	for (int i=0; i<nScopes; i++) {
-		scopeWin.scopes[i].setup(5, (i+1)*100, names, colors, nVariables, 1., 0.);
+		// Setup the oscilloscopes
+		scopeWin.scopes.at(i).setup(5, (i+1)*100, vec_names, vec_colors, 1., 0.);
 	}
+
+	// Allocate space for new data in form data[nVariables][nPoints]
 	data.resize(nVariables, vector<float>(newPoints, 0));
 
 	zeroData = false;
@@ -34,22 +41,42 @@ void testApp::draw(){
 	//printf("draw()\n");
 
 	if (zeroData) {
-		for (int i=0; i<newPoints; i++) {
-			data[0][i] = 0.;
-		}
+		data.at(0).assign(data.at(0).size(), 0.);
 	} else {
 		for (int i=0; i<newPoints; i++) {
-			data[0][i] = counter; counter++; if(counter>ofGetWindowSize().y/2) counter=-ofGetWindowSize().y/2;// + ofRandomf()
+			data.at(0).at(i) = counter; counter++; if(counter>ofGetWindowSize().y/2) counter=-ofGetWindowSize().y/2;// + ofRandomf()
 		}
 	}
 	for (int i=0; i<newPoints; i++) {
-		data[1][i] = counter2; counter2--; if(counter2<-50) counter2=50;// + ofRandomf()
+		data.at(1).at(i) = counter2; counter2--; if(counter2<-50) counter2=50;// + ofRandomf()
 	}
 
+	/*
+	// Code for Testing arrays... 
+	// DON'T USE ARRAYS UNLESS YOU WANT A HEADACHE
+	float ** array_data = new float*[data.size()];
+	for (int i=0; i<data.size(); i++) {
+		array_data[i] = new float[data.at(i).size()];
+		for (int j=0; j<data.at(i).size(); j++) {
+			array_data[i][j] = data.at(i).at(j);
+		}
+	}
+	*/
 
 	for (int i=0; i<nScopes; i++) {
-		scopeWin.scopes[i].updateData(data, newPoints);
+		scopeWin.scopes.at(i).updateData(data);
+		//scopeWin.scopes.at(i).updateData(array_data, data.at(0).size());
 	}
+
+	/*
+	// Code for Testing arrays... 
+	// DON'T USE ARRAYS UNLESS YOU WANT A HEADACHE
+	for (int i=0; i<data.size(); i++) {
+		delete[] array_data[i];
+	}
+	delete[] array_data;
+	*/
+
 	zeroData = false;
 	scopeWin.plot();
 	ofSleepMillis(100);

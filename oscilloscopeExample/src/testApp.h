@@ -22,7 +22,6 @@ class testApp : public ofBaseApp{
 
 		ofxMultiScope scopeWin;
 		int newPoints;
-		int nVariables;
 		int nScopes;
 		std::vector<std::vector<float>> data;
 		bool zeroData;

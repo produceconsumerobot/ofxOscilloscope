@@ -12,7 +12,8 @@
 #define _OSCILLOSCOPE
 
 #include "ofMain.h"
-
+#include <vector>
+#include <algorithm>
 
 
 /*-------------------------------------------------
@@ -27,19 +28,24 @@ private:
 	int _pointsPerWin; //(nPoints)
 	int _sampFreq;
 	int _nVariables;
-	ofColor * _variableColors;
-	float ** _buffer;
+	std::vector<ofColor> _variableColors;
+	std::vector< vector<float > > _buffer;
 	float _yScale;
 	float _yOffset;
 public:
 	ofxScopePlot();
 	~ofxScopePlot();
-	void setup(float timeWindow, int sampFreq, 
-		ofColor variableColors[], int nVariables, 
+
+	void setup(float timeWindow, int sampFreq, std::vector<ofColor> variableColors, 
 		ofPoint min, ofPoint max, float yScale=1.0, float yOffset=0.0);
+	void setup(float timeWindow, int sampFreq, ofColor variableColors[], int nVariables, 
+		ofPoint min, ofPoint max, float yScale=1.0, float yOffset=0.0);
+
+	void setVariableColors(std::vector<ofColor> colors);
 	void setVariableColors(ofColor colors[], int nColors);
+
 	void updateData(float ** data, int nPoints); // data[_nVariables][nPoints]
-	void updateData(std::vector<std::vector<float>> &data, int nPoints);
+	void updateData(std::vector<std::vector<float>> data);
 	void plot();
 
 	int getNumVariables();
@@ -56,19 +62,27 @@ private:
 	int _legendPadding;
 	int _textSpacer;
 	ofxScopePlot _scope;
-	string * _variableNames;
+	std::vector<string> _variableNames;
 public:
-	//ofxOscilloscope();
 	ofxOscilloscope(ofPoint min=ofPoint(0,0), ofPoint max=ofGetWindowSize(), int legendWidth=100);
 	~ofxOscilloscope();
+
+	void setup(float timeWindow, int sampFreq, 
+		std::vector<string> variableNames, std::vector<ofColor> variableColors, 
+		float yScale=1.0, float yOffset=0.0);
 	void setup(float timeWindow, int sampFreq, 
 		string variableNames[], ofColor variableColors[], int nVariables, 
 		float yScale=1.0, float yOffset=0.0);
+
+	void setVariableNames(std::vector<string> variableNames);
 	void setVariableNames(string variableNames[], int nVariables);
+
+	void setVariableColors(std::vector<ofColor> colors);
 	void setVariableColors(ofColor colors[], int nColors);
+
+	void updateData(std::vector<std::vector<float>> data);
 	void updateData(float ** data, int nPoints); // data[_nVariables][nPoints]
-	void updateData(std::vector<std::vector<float>> &data, int nPoints);
-	//void updateData(ofxScopeData data, int nPoints); // data[_nVariables][nPoints]
+
 	void plot();
 	void setTimeWindow(float timeWindow);
 
@@ -81,7 +95,7 @@ private:
 	ofPoint _max;
 	int _numScopes;
 public:
-	ofxOscilloscope * scopes;
+	std::vector<ofxOscilloscope> scopes;
 
 	ofxMultiScope();
 	ofxMultiScope(int numScopes, ofPoint min=ofPoint(0,0), ofPoint max=ofGetWindowSize(), int legendWidth=100);
