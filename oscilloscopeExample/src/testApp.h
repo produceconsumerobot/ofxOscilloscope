@@ -23,7 +23,7 @@ class testApp : public ofBaseApp{
 		ofxMultiScope scopeWin;
 		int newPoints;
 		int nScopes;
-		std::vector<std::vector<float>> data;
+		std::vector<std::vector<float> > data;
 		bool zeroData;
 		int counter;
 		int counter2;

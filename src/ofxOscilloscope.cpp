@@ -92,7 +92,7 @@ void ofxScopePlot::setup(float timeWindow, int sampFreq, ofColor variableColors[
 ** of variables initialized with setup. plot() may be called to display the 
 ** updated buffer.
 */
-void ofxScopePlot::updateData(std::vector<std::vector<float>> data) {
+void ofxScopePlot::updateData(std::vector<std::vector<float> > data) {
 #ifdef DEBUG_PRINT
 	printf("ofxScopePlot::updateData\n"); 
 #endif
@@ -385,7 +385,7 @@ void ofxOscilloscope::updateData(float ** data, int nPoints) {
 ** of variables initialized with setup. plot() may be called to display the 
 ** updated buffer.
 */
-void ofxOscilloscope::updateData(std::vector<std::vector<float>> data) {
+void ofxOscilloscope::updateData(std::vector<std::vector<float> > data) {
 #ifdef DEBUG_PRINT
 	printf("ofxOscilloscope::updateData\n"); 
 #endif

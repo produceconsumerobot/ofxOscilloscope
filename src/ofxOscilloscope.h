@@ -45,7 +45,7 @@ public:
 	void setVariableColors(ofColor colors[], int nColors);
 
 	void updateData(float ** data, int nPoints); // data[_nVariables][nPoints]
-	void updateData(std::vector<std::vector<float>> data);
+	void updateData(std::vector<std::vector<float> > data);
 	void plot();
 
 	int getNumVariables();
@@ -80,7 +80,7 @@ public:
 	void setVariableColors(std::vector<ofColor> colors);
 	void setVariableColors(ofColor colors[], int nColors);
 
-	void updateData(std::vector<std::vector<float>> data);
+	void updateData(std::vector<std::vector<float> > data);
 	void updateData(float ** data, int nPoints); // data[_nVariables][nPoints]
 
 	void plot();
