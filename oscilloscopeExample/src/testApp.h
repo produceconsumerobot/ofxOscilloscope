@@ -29,4 +29,6 @@ class testApp : public ofBaseApp{
 		int counter2;
 		ofPoint min;
 		ofPoint max;
+
+		int selectedScope;
 };

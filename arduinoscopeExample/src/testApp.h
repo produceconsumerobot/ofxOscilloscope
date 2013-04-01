@@ -44,4 +44,5 @@ class testApp : public ofBaseApp{
 		int nPlotsScope0;
 		int nPlotsScope1;
 		float samplingFreq;
+		int selectedScope;
 };

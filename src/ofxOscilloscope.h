@@ -36,12 +36,15 @@ private:
 	float _yOffset;
 	ofColor _zeroLineColor;
 	ofColor _backgroundColor;
+	float _plotLineWidth;
 public:
 	// Constructors
 	ofxScopePlot(ofRectangle plotArea,
-		ofColor zeroLineColor=ofColor(240,240,240), ofColor backgroundColor=ofColor(0.,0.,0.,0.));
+		ofColor zeroLineColor=ofColor(240,240,240), ofColor backgroundColor=ofColor(0.,0.,0.,0.),
+		float plotLineWidth=1.);
 	ofxScopePlot(ofPoint min=ofPoint(0,0), ofPoint max=ofGetWindowSize(),
-		ofColor zeroLineColor=ofColor(240,240,240), ofColor backgroundColor=ofColor(0.,0.,0.,0.));
+		ofColor zeroLineColor=ofColor(240,240,240), ofColor backgroundColor=ofColor(0.,0.,0.,0.),
+		float plotLineWidth=1.);
 	// Destructor
 	~ofxScopePlot();
 
@@ -62,6 +65,8 @@ public:
 	// Setters/Getters
 	void setVariableColors(std::vector<ofColor> colors);
 	void setVariableColors(ofColor colors[], int nColors);
+
+	void setPlotLineWidth(float plotLineWidth);
 
 	void setZeroLineColor(ofColor zeroLineColor);
 	void setBackgroundColor(ofColor backgroundColor);
@@ -100,17 +105,20 @@ private:
 	ofxScopePlot _scopePlot;
 	std::vector<string> _variableNames;
 	ofColor _outlineColor;
+	float _outlineWidth;
 	ofColor _backgroundColor;
 public:
 	// Constructors
 	ofxOscilloscope(ofRectangle scopeArea, 
 		ofTrueTypeFont legendFont=ofTrueTypeFont(), int legendWidth=100,
 		ofColor outlineColor=ofColor(200,200,200), ofColor zeroLineColor=ofColor(240,240,240),
-		ofColor backgroundColor=ofColor(0.,0.,0.,0.));
+		ofColor backgroundColor=ofColor(0.,0.,0.,0.),
+		float plotLineWidth=1., float outlineWidth=1.);
 	ofxOscilloscope(ofPoint min=ofPoint(0,0), ofPoint max=ofGetWindowSize(), 
 		ofTrueTypeFont legendFont=ofTrueTypeFont(), int legendWidth=100,
 		ofColor outlineColor=ofColor(200,200,200), ofColor zeroLineColor=ofColor(240,240,240),
-		ofColor backgroundColor=ofColor(0.,0.,0.,0.));
+		ofColor backgroundColor=ofColor(0.,0.,0.,0.),
+		float plotLineWidth=1., float outlineWidth=1.);
 	// Destructor
 	~ofxOscilloscope();
 
@@ -138,11 +146,14 @@ public:
 	void setVariableColors(ofColor colors[], int nColors);
 
 	void setTimeWindow(float timeWindow);
+	float getTimeWindow();
 	void setPosition(ofPoint min, ofPoint max);
 	void setPosition(ofRectangle scopeArea);
 	ofRectangle getPosition();
 	//void setPosition(ofPoint center, int height, int width);
 
+	void setPlotLineWidth(float plotLineWidth);
+	void setOutlineWidth(float outlineWidth);
 	void setOutlineColor(ofColor outlineColor);
 	void setZeroLineColor(ofColor zeroLineColor);
 	void setBackgroundColor(ofColor backgroundColor);
@@ -155,8 +166,19 @@ public:
 	float getYScale();
 	void setYOffset(float yOffset);
 	float getYOffset();
+
+	float incrementYScale();
+	float decrementYScale();
+	float incrementYOffset();
+	float decrementYOffset();
+	float incrementTimeWindow();
+	float decrementTimeWindow();
 	
 	string getVariableName(int i);
+
+	static float round(float number) {
+		return number < 0.0 ? ceil(number - 0.5) : floor(number + 0.5);
+	}
 };
 
 
@@ -203,6 +225,13 @@ public:
 	void setLegendFont(ofTrueTypeFont legendFont);
 	void setLegendWidth(int legendWidth);
 	void setTextSpacing(int legendPadding, int textSpacing);
+
+	vector<float> incrementYScale();
+	vector<float> decrementYScale();
+	vector<float> incrementYOffset();
+	vector<float> decrementYOffset();
+	vector<float> incrementTimeWindow();
+	vector<float> decrementTimeWindow();
 
 };
 

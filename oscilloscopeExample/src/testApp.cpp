@@ -36,6 +36,8 @@ void testApp::setup(){
 	zeroData = false;
 	counter = 0;
 	counter2 = 0;
+
+	selectedScope = 0; // Select all scopes for increment/decrement
 }
 
 //--------------------------------------------------------------
@@ -96,10 +98,79 @@ void testApp::exit(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
+	cout << "Key Pressed: " << key << "\n";
+
 	if (key == '0') {
 		zeroData = true;
 	}
 	
+	// Choose an oscilloscope panel for changing yScale/yOffset/timeWindow
+	// Starts counting from 1
+	// Zero = all
+	if ((key >= 48) && (key <= 57)){
+		int number = key - 48;
+		if (number <= nScopes) {
+			selectedScope = number;
+		}
+	}
+	
+	
+	// Increment the yScale
+	if (key == '+') {
+		if (selectedScope == 0) {
+			scopeWin.incrementYScale();
+		} else {
+			scopeWin.scopes.at(selectedScope - 1).incrementYScale();
+		}
+	}
+	
+	// Decrement the yScale
+	if ((key == '-') || (key == '_')) {
+		if (selectedScope == 0) {
+			scopeWin.decrementYScale();
+		} else {
+			scopeWin.scopes.at(selectedScope - 1).decrementYScale();
+		}
+	}
+
+	// Increment the yOffset
+	if (key == 357) { // Up Arrow
+		if (selectedScope == 0) {
+			scopeWin.incrementYOffset();
+		} else {
+			scopeWin.scopes.at(selectedScope - 1).incrementYOffset();
+		}
+	}
+	
+	// Decrement the yOffset
+	if (key == 359) { // Down Arrow
+		if (selectedScope == 0) {
+			scopeWin.decrementYOffset();
+		} else {
+			scopeWin.scopes.at(selectedScope - 1).decrementYOffset();
+		}
+	}
+
+	// Increment the timeWindow
+	if (key == 358) { // Right Arrow
+		if (selectedScope == 0) {
+			scopeWin.incrementTimeWindow();
+		} else {
+			scopeWin.scopes.at(selectedScope - 1).incrementTimeWindow();
+		}
+	}
+	
+	// Decrement the timeWindow
+	if (key == 356) { // Left Arrow
+		if (selectedScope == 0) {
+			scopeWin.decrementTimeWindow();
+		} else {
+			scopeWin.scopes.at(selectedScope - 1).decrementTimeWindow();
+		}
+	}
+
+
+	/*
 	// testing yScale
 	if (key == '1') {
 		scopeWin.scopes.at(1).setYScale(scopeWin.scopes.at(1).getYScale() / 2); 
@@ -115,10 +186,25 @@ void testApp::keyPressed(int key){
 	if (key == '4') {
 		scopeWin.scopes.at(1).setYOffset(scopeWin.scopes.at(1).getYOffset() + 10); 
 	}
+	*/
 }
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){
+	cout << "Key Released: " << key << "\n";
+
+
+	// testing line widths
+	if (key == ',') {
+		scopeWin.scopes.at(1).setOutlineWidth(10); 
+		scopeWin.scopes.at(1).setPlotLineWidth(5); 
+	}
+	if (key == '.') {
+		scopeWin.scopes.at(1).setOutlineWidth(1); 
+		scopeWin.scopes.at(1).setPlotLineWidth(1); 
+	}
+
+
 	// testing setVariableNames
 	if (key == 'n') {
 		const int nVariables = 2;
