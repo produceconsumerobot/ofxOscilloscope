@@ -1,105 +1,115 @@
 #include "testApp.h"
 
+//
+//  arduinoscope
+//
+//  openFrameworks program to display arduino data as on an oscilloscope
+//  
+//  Requires:
+//	ofxOscilloscope addon
+//	StandardFirmata Example running on the Arduino
+//
+//  Created by Sean Montgomery on 3/31/13.
+//
+//  This work is licensed under the Creative Commons 
+//  Attribution-ShareAlike 3.0 Unported License. 
+//  To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+//
+
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofBackground(255,255,255);
 	ofTrueTypeFont legendFont;
 	legendFont.loadFont("verdana.ttf", 12, true, true);
 
-	const int nVariables = 2;
-	newPoints = 23;
-	
-	ofColor colors[nVariables] = {ofColor(0,0,0), ofColor(255,0,0)};
-	std::vector<ofColor> vec_colors(colors, colors + nVariables);
 
-	string names[2] = {"happy", "joy"};
-	std::vector<string> vec_names(names, names + nVariables);
-
-	nScopes = 5;
-	float timeWindow = 5.; // seconds
-	float samplingFreqMult = 100;
-	float yScale = 1.; // yScale multiplier
-	float yOffset = 0.; // yOffset from the center of the scope window
+	int nScopes = 2;
 	ofRectangle scopeArea = ofRectangle(ofPoint(0,0), ofGetWindowSize());
-
 	scopeWin = ofxMultiScope(nScopes, scopeArea, legendFont); // Setup the multiScope panel
 
-	for (int i=0; i<nScopes; i++) {
-		// Setup the oscilloscopes
-		scopeWin.scopes.at(i).setup(timeWindow, (i+1)*samplingFreqMult, vec_names, vec_colors, 
+	samplingFreq = 10.; // Sampling rate (Hz)
+	{ // Scope 0 setup
+		const int nVariables = 3;
+		nPlotsScope0 = nVariables;
+		float timeWindow = 5.; // seconds
+		float yScale = 0.5; // yScale multiplier
+		float yOffset = -256.; // yOffset from the center of the scope window
+		ofColor colors[nVariables] = {ofColor(255,0,0), ofColor(0,255,0), ofColor(0,0,255)};
+		std::vector<ofColor> vec_colors(colors, colors + nVariables);
+
+		string names[nVariables] = {"A0", "A1", "A2"};
+		std::vector<string> vec_names(names, names + nVariables);
+		scopeWin.scopes.at(0).setup(timeWindow, samplingFreq, vec_names, vec_colors, 
+			yScale, yOffset); // Setup each oscilloscope panel
+	}
+	{ // Scope 1 setup
+		const int nVariables = 2;
+		nPlotsScope1 = nVariables;
+		float timeWindow = 10.; // seconds
+		float yScale = 0.5; // yScale multiplier
+		float yOffset = -256.; // yOffset from the center of the scope window
+		ofColor colors[nVariables] = {ofColor(0,0,0), ofColor(255,0,255)};
+		std::vector<ofColor> vec_colors(colors, colors + nVariables);
+
+		string names[nVariables] = {"A3", "A4"};
+		std::vector<string> vec_names(names, names + nVariables);
+		scopeWin.scopes.at(1).setup(timeWindow, samplingFreq, vec_names, vec_colors, 
 			yScale, yOffset); // Setup each oscilloscope panel
 	}
 
-	// Allocate space for new data in form data[nVariables][nPoints]
-	data.resize(nVariables, vector<float>(newPoints, 0));
 
-	zeroData = false;
-	counter = 0;
-	counter2 = 0;
+	// Setup Arduino
+	string arduinoPort = "\\\\.\\COM10";
+	arduino.connect(arduinoPort, 57600);
+	while(!arduino.isArduinoReady()); 
+	arduino.sendAnalogPinReporting(0, ARD_ANALOG);
+	arduino.sendAnalogPinReporting(1, ARD_ANALOG);
+	arduino.sendAnalogPinReporting(2, ARD_ANALOG);
+	arduino.sendAnalogPinReporting(3, ARD_ANALOG);
+	arduino.sendAnalogPinReporting(4, ARD_ANALOG);
+
+	arduino.update();
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
+	arduino.update();
 
+	// Scope 1 - Analog Data
+	vector<float> analogData1;
+	analogData1.resize(nPlotsScope0);
+	for (int i=0; i<nPlotsScope0; i++) {
+		analogData1.at(i) = (arduino.getAnalog(i));
+	}
+	scopeWin.scopes.at(0).updateData(analogData1);
+
+	// Scope 2 - Digital Data
+	vector<float> analogData2;
+	analogData2.resize(nPlotsScope1);
+	for (int i=0; i<nPlotsScope1; i++) {
+		analogData2.at(i) = (arduino.getAnalog(i+nPlotsScope0));
+	}
+	scopeWin.scopes.at(1).updateData(analogData2);
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	//printf("draw()\n");
-
-	if (zeroData) {
-		data.at(0).assign(data.at(0).size(), 0.);
-	} else {
-		for (int i=0; i<newPoints; i++) {
-			data.at(0).at(i) = counter; counter++; if(counter>ofGetWindowSize().y/2) counter=-ofGetWindowSize().y/2;// + ofRandomf()
-		}
-	}
-	for (int i=0; i<newPoints; i++) {
-		data.at(1).at(i) = counter2; counter2--; if(counter2<-50) counter2=50;// + ofRandomf()
-	}
-
-	/*
-	// Code for Testing arrays... 
-	// DON'T USE ARRAYS UNLESS YOU WANT A HEADACHE
-	float ** array_data = new float*[data.size()];
-	for (int i=0; i<data.size(); i++) {
-		array_data[i] = new float[data.at(i).size()];
-		for (int j=0; j<data.at(i).size(); j++) {
-			array_data[i][j] = data.at(i).at(j);
-		}
-	}
-	*/
-
-	for (int i=0; i<nScopes; i++) {
-		scopeWin.scopes.at(i).updateData(data);
-		//scopeWin.scopes.at(i).updateData(array_data, data.at(0).size());
-	}
-
-	/*
-	// Code for Testing arrays... 
-	// DON'T USE ARRAYS UNLESS YOU WANT A HEADACHE
-	for (int i=0; i<data.size(); i++) {
-		delete[] array_data[i];
-	}
-	delete[] array_data;
-	*/
-
-	zeroData = false;
 	scopeWin.plot();
-	ofSleepMillis(100);
+	ofSleepMillis(1000/samplingFreq);
 }
 
 //--------------------------------------------------------------
 void testApp::exit(){
 	printf("exit()");
+	arduino.disconnect();
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
 	if (key == '0') {
-		zeroData = true;
+		//zeroData = true;
 	}
-	
+
 	// testing yScale
 	if (key == '1') {
 		scopeWin.scopes.at(1).setYScale(scopeWin.scopes.at(1).getYScale() / 2); 
@@ -119,6 +129,7 @@ void testApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){
+
 	// testing setVariableNames
 	if (key == 'n') {
 		const int nVariables = 2;
@@ -170,13 +181,13 @@ void testApp::keyReleased(int key){
 		scopeWin.setPosition(pos);
 	}
 	if (key == 'd') {
-		min = ofPoint(0., 0.);
-		max = ofPoint(ofGetWindowSize().x, ofGetWindowSize().y);
+		ofPoint min = ofPoint(0., 0.);
+		ofPoint max = ofPoint(ofGetWindowSize().x, ofGetWindowSize().y);
 		scopeWin.setPosition(min, max);
 	}
 	if (key == 'f') {
-		min = ofPoint(50., 300.);
-		max = ofPoint(ofGetWindowSize().x - 200., ofGetWindowSize().y - 200.);
+		ofPoint min = ofPoint(50., 300.);
+		ofPoint max = ofPoint(ofGetWindowSize().x - 200., ofGetWindowSize().y - 200.);
 		scopeWin.setPosition(min, max);
 	}
 

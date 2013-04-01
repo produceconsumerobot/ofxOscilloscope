@@ -1,5 +1,7 @@
 //
-//  oscilloscope.cpp
+//  ofxOscilloscope.cpp
+//
+//  openFrameworks addOn to display data as on an oscilloscope
 //
 //  Created by Sean Montgomery on 12/21/12.
 //
@@ -7,7 +9,6 @@
 //  Attribution-ShareAlike 3.0 Unported License. 
 //  To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
 //
-
 #include "ofxOscilloscope.h"
 
 /*-------------------------------------------------
@@ -18,7 +19,21 @@
 /*
 ** ofxScopePlot
 */
-ofxScopePlot::ofxScopePlot() {
+ofxScopePlot::ofxScopePlot(ofRectangle plotArea, ofColor zeroLineColor, 
+	ofColor backgroundColor) {
+		setPosition(plotArea);
+		setZeroLineColor(zeroLineColor);
+		setBackgroundColor(backgroundColor);
+}
+
+/*
+** ofxScopePlot
+*/
+ofxScopePlot::ofxScopePlot(ofPoint min, ofPoint max, ofColor zeroLineColor,
+	ofColor backgroundColor) {
+		setPosition(min, max);
+		setZeroLineColor(zeroLineColor);
+		setBackgroundColor(backgroundColor);
 }
 
 /*
@@ -39,11 +54,10 @@ ofxScopePlot::~ofxScopePlot() {
 ** max				Specifies the bottom-right of the ScopePlot
 ** yScale			Muliplier for Y scaling axis
 ** yOffset			Offset for the Y axis
+** zeroLineColor	Color of the zero line
 */
-void ofxScopePlot::setup(float timeWindow, int sampFreq, std::vector<ofColor> variableColors, 
-	ofPoint min, ofPoint max, float yScale, float yOffset) {
-		_min = min;
-		_max = max;
+void ofxScopePlot::setup(float timeWindow, float sampFreq, std::vector<ofColor> variableColors, 
+	float yScale, float yOffset) {
 		_timeWindow = timeWindow;
 		_pointsPerWin = floor(_timeWindow * sampFreq); //(sec)
 		_sampFreq = sampFreq;
@@ -53,8 +67,8 @@ void ofxScopePlot::setup(float timeWindow, int sampFreq, std::vector<ofColor> va
 			_buffer.push_back(std::vector<float>(_pointsPerWin, 0.));
 		}
 
-		_yScale = yScale;
-		_yOffset = yOffset;
+		setYScale(yScale);
+		setYOffset(yOffset);
 
 		setVariableColors(variableColors);
 }
@@ -73,13 +87,42 @@ void ofxScopePlot::setup(float timeWindow, int sampFreq, std::vector<ofColor> va
 ** yScale			Muliplier for Y scaling axis
 ** yOffset			Offset for the Y axis
 */
-void ofxScopePlot::setup(float timeWindow, int sampFreq, ofColor variableColors[], int nVariables, 
-		ofPoint min, ofPoint max, float yScale, float yOffset) {
+void ofxScopePlot::setup(float timeWindow, float sampFreq, ofColor variableColors[], int nVariables, 
+		float yScale, float yOffset) {
 
 			std::vector<ofColor> vec_variableColors;
 			vec_variableColors.assign(variableColors, variableColors + nVariables);
 
-			setup(timeWindow, sampFreq, vec_variableColors, min, max, yScale, yOffset);
+			setup(timeWindow, sampFreq, vec_variableColors, yScale, yOffset);
+}
+
+
+/*
+** updateData
+**
+** Data should come in the form[nVariables] with one data point/variable
+**
+** Loads new data onto the ScopePlot buffer. Must have the same number
+** of variables initialized with setup. plot() may be called to display the 
+** updated buffer.
+*/
+void ofxScopePlot::updateData(std::vector<float> data) {
+#ifdef DEBUG_PRINT
+	printf("ofxScopePlot::updateData\n"); 
+#endif
+	if (data.size() != getNumVariables()) {
+		fprintf(stderr, "ERROR: data.size() != getNumVariables()");
+	} else {
+		for (int i=0; i<data.size(); i++) {
+
+			// Insert the data elements into the beginning of _buffer
+			_buffer.at(i).insert(_buffer.at(i).begin(), data.at(i));
+
+			// Erase elements at end of _buffer
+			_buffer.at(i).erase(_buffer.at(i).begin() + _pointsPerWin, _buffer.at(i).end());
+
+		}
+	}
 }
 
 
@@ -170,6 +213,88 @@ void ofxScopePlot::setVariableColors(ofColor colors[], int nColors) {
 }
 
 /*
+** setZeroLineColor
+** Sets the color of the zero line.
+*/
+void ofxScopePlot::setZeroLineColor(ofColor zeroLineColor) {
+	_zeroLineColor = zeroLineColor;
+}
+
+/*
+** setBackgroundColor
+** Sets the color of the background.
+*/
+void ofxScopePlot::setBackgroundColor(ofColor backgroundColor) {
+	_backgroundColor = backgroundColor;
+}
+
+/*
+** setPosition
+** Sets the position of the oscilloscope window.
+*/ 
+void  ofxScopePlot::setPosition(ofPoint min, ofPoint max) {
+	_min = min;
+	_max = max;
+}
+void  ofxScopePlot::setPosition(ofRectangle plotArea) {
+	setPosition(plotArea.getTopLeft(), plotArea.getBottomRight());
+}
+
+/*
+** getPosition
+** gets the rectangle defining the position of the oscilloscope window.
+*/ 
+ofRectangle ofxScopePlot::getPosition() {
+	ofRectangle rect = ofRectangle((const ofPoint) _min, (const ofPoint) _max);
+	return rect;
+}
+
+/*
+** setTimeWindow
+** Sets the timeWindow covered by the scope.
+*/ 
+void ofxScopePlot::setTimeWindow(float timeWindow) {
+	_timeWindow = timeWindow;
+	_pointsPerWin = floor(_timeWindow * _sampFreq); //(sec)
+	for (int i=0; i<_nVariables; i++) {
+		_buffer.at(i).resize(_pointsPerWin);
+	}
+}
+
+/*
+** setYScale
+** Sets the yScale of the data in the oscilloscope window.
+*/ 
+void ofxScopePlot::setYScale(float yScale) {
+	_yScale = yScale;
+}
+
+/*
+** getYScale
+** Gets the yScale of the data in the oscilloscope window.
+*/ 
+float ofxScopePlot::getYScale() {
+	return _yScale;
+}
+
+/*
+** setYOffset
+** Sets the yOffset of the data in the oscilloscope window.
+*/ 
+void ofxScopePlot::setYOffset(float yOffset) {
+	_yOffset = yOffset;
+}
+
+/*
+** getYOffset
+** Gets the yOffset of the data in the oscilloscope window.
+*/ 
+float ofxScopePlot::getYOffset() {
+	return _yOffset;
+}
+
+
+/*
 ** plot
 ** Plots the data in the buffer
 */
@@ -181,8 +306,14 @@ void ofxScopePlot::plot() {
 	//printf("xPlotScale: %f, yPlotScale: %f, yPlotOffset: %f\n", xPlotScale, yPlotScale, yPlotOffset);
 	//ofScale(1., 1., 1.);
 
+	// Background
+	ofEnableAlphaBlending();
+	ofSetColor(_backgroundColor);
+	ofRect(ofRectangle(_min, _max));
+	ofDisableAlphaBlending(); 
+
 	// Scope zero line
-	ofSetColor(240,240,240);
+	ofSetColor(_zeroLineColor);
 	ofLine(_min.x, _min.y + (_max.y - _min.y)/2, _max.x, _min.y + (_max.y - _min.y)/2);
 
 	for (int i=0; i<getNumVariables(); i++) {
@@ -251,16 +382,58 @@ ofxOscilloscope::ofxOscilloscope() {
 	_legendWidth=100;
 }
 */
-ofxOscilloscope::ofxOscilloscope(ofPoint min, ofPoint max, int legendWidth) {
+ofxOscilloscope::ofxOscilloscope(ofRectangle scopeArea, ofTrueTypeFont legendFont,
+	int legendWidth, ofColor outlineColor, ofColor zeroLineColor, ofColor backgroundColor) {
+	_min = scopeArea.getTopLeft();
+	_max = scopeArea.getBottomRight();
+	_legendWidth = legendWidth;
+
+	// Create scopePlot
+	ofPoint min = _min;
+	ofPoint max = _max;
+	min.x = min.x + _legendWidth;
+	_scopePlot = ofxScopePlot(min, max, zeroLineColor);
+
+	setOutlineColor(outlineColor);
+	setBackgroundColor(backgroundColor);
+
+	if(legendFont.isLoaded()) {
+		setLegendFont(legendFont);
+	} else {
+		_legendFont.loadFont("verdana.ttf", 12, true, true);
+			//_legendFont.setLineHeight(18.0f);
+		//_legendFont.setLetterSpacing(1.037);
+		//ofTrueTypeFont::setGlobalDpi(72);
+	}
+
+	// Default values
+	_legendPadding = 10;
+	_textSpacer = 20;
+}
+
+ofxOscilloscope::ofxOscilloscope(ofPoint min, ofPoint max, ofTrueTypeFont legendFont,
+	int legendWidth, ofColor outlineColor, ofColor zeroLineColor, ofColor backgroundColor) {
 	_min = min;
 	_max = max;
 	_legendWidth = legendWidth;
 
-	_legendFont.loadFont("verdana.ttf", 12, true, true);
-		//_legendFont.setLineHeight(18.0f);
-	//_legendFont.setLetterSpacing(1.037);
-	//ofTrueTypeFont::setGlobalDpi(72);
+	// Create scopePlot
+	min.x = min.x + _legendWidth;
+	_scopePlot = ofxScopePlot(min, max, zeroLineColor);
 
+	setOutlineColor(outlineColor);
+	setBackgroundColor(backgroundColor);
+
+	if(legendFont.isLoaded()) {
+		setLegendFont(legendFont);
+	} else {
+		_legendFont.loadFont("verdana.ttf", 12, true, true);
+			//_legendFont.setLineHeight(18.0f);
+		//_legendFont.setLetterSpacing(1.037);
+		//ofTrueTypeFont::setGlobalDpi(72);
+	}
+
+	// Default values
 	_legendPadding = 10;
 	_textSpacer = 20;
 }
@@ -286,7 +459,7 @@ ofxOscilloscope::~ofxOscilloscope() {
 ** REMARKS:
 ** variableNames and variableColors must be the same size.
 */
-void ofxOscilloscope::setup(float timeWindow, int sampFreq, 
+void ofxOscilloscope::setup(float timeWindow, float sampFreq, 
 	std::vector<string> variableNames, std::vector<ofColor> variableColors, 
 	float yScale, float yOffset) {
 
@@ -295,7 +468,7 @@ void ofxOscilloscope::setup(float timeWindow, int sampFreq,
 		} else {
 			ofPoint min = _min;
 			min.x = min.x + _legendWidth;
-			_scope.setup(timeWindow, sampFreq, variableColors, min, _max, yScale, yOffset);
+			_scopePlot.setup(timeWindow, sampFreq, variableColors, yScale, yOffset);
 			setVariableNames(variableNames);
 		}
 }
@@ -316,7 +489,7 @@ void ofxOscilloscope::setup(float timeWindow, int sampFreq,
 ** REMARKS:
 ** variableNames and variableColors must be the same size.
 */
-void ofxOscilloscope::setup(float timeWindow, int sampFreq, string variableNames[], 
+void ofxOscilloscope::setup(float timeWindow, float sampFreq, string variableNames[], 
 	ofColor variableColors[], int nVariables, float yScale, float yOffset) {
 
 		std::vector<string> vec_variableNames;
@@ -333,7 +506,7 @@ void ofxOscilloscope::setup(float timeWindow, int sampFreq, string variableNames
 ** Must be called after setup with the same number of variables initialized.
 */
 void ofxOscilloscope::setVariableNames(std::vector<string> variableNames) {
-	if (variableNames.size() != _scope.getNumVariables()) {
+	if (variableNames.size() != _scopePlot.getNumVariables()) {
 		fprintf(stderr, "ERROR: variableNames.size() != getNumVariables()");
 	} else {
 		_variableNames = variableNames;
@@ -356,14 +529,14 @@ void ofxOscilloscope::setVariableNames(string variableNames[], int nVariables) {
 ** Must be called after setup with the same number of variables initialized.
 */
 void ofxOscilloscope::setVariableColors(std::vector<ofColor> colors){
-	_scope.setVariableColors(colors);
+	_scopePlot.setVariableColors(colors);
 }
 
 /*
 ** setVariableColors
 ** Must be called after setup with the same number of variables initialized.
 */
-void ofxOscilloscope:: setVariableColors(ofColor colors[], int nColors) {
+void ofxOscilloscope::setVariableColors(ofColor colors[], int nColors) {
 		std::vector<ofColor> vec_colors;
 		vec_colors.assign(colors, colors + nColors);
 
@@ -371,10 +544,139 @@ void ofxOscilloscope:: setVariableColors(ofColor colors[], int nColors) {
 }
 
 /*
-void ofxOscilloscope::updateData(float ** data, int nPoints) {
-	_scope.updateData(data, nPoints);
-}
+** setOutlineColor
+** Sets the color of the scope outlines
 */
+void ofxOscilloscope::setOutlineColor(ofColor outlineColor) {
+	_outlineColor = outlineColor;
+}
+
+/*
+** setZeroLineColor
+** Sets the color of the scope zero line
+*/
+void ofxOscilloscope::setZeroLineColor(ofColor zeroLineColor) {
+	_scopePlot.setZeroLineColor(zeroLineColor);
+}
+
+/*
+** setBackgroundColor
+** Sets the color of the background.
+*/
+void ofxOscilloscope::setBackgroundColor(ofColor backgroundColor) {
+	_backgroundColor = backgroundColor;
+	_scopePlot.setBackgroundColor(backgroundColor);
+}
+
+/*
+** setLegendFont
+** Sets the font used for the legend text
+*/ 
+void ofxOscilloscope::setLegendFont(ofTrueTypeFont legendFont) {
+	_legendFont = legendFont;
+}
+
+/*
+** setLegendWidth
+** Sets the width of the legend
+*/ 
+void ofxOscilloscope::setLegendWidth(int legendWidth) {
+	_legendWidth = legendWidth;
+	setPosition(getPosition());
+}
+
+/*
+** setTextSpacing
+** Sets the spacing of text in the legend.
+** legendPadding is the padding between the legend borders and the text.
+** textSpacing the spacing between the text of the variable names.
+*/ 
+void ofxOscilloscope::setTextSpacing(int legendPadding, int textSpacing) {
+	_legendPadding = legendPadding;
+	_textSpacer = textSpacing;
+}
+
+/*
+** setPosition
+** Sets the position of the oscilloscope window.
+*/ 
+void ofxOscilloscope::setPosition(ofPoint min, ofPoint max) {
+	_min = min;
+	_max = max;
+
+	// reposition the scopePlot
+	min.x = min.x + _legendWidth;
+	_scopePlot.setPosition(min, max);
+}
+void  ofxOscilloscope::setPosition(ofRectangle scopeArea) {
+	setPosition(scopeArea.getTopLeft(), scopeArea.getBottomRight());
+}
+
+/*
+** getPosition
+** gets the rectangle defining the position of the oscilloscope window.
+*/ 
+ofRectangle ofxOscilloscope::getPosition() {
+	ofRectangle rect = ofRectangle((const ofPoint) _min, (const ofPoint) _max);
+	return rect;
+}
+
+/*
+** setTimeWindow
+** Sets the timeWindow covered by the scope.
+*/ 
+void ofxOscilloscope::setTimeWindow(float timeWindow) {
+	_scopePlot.setTimeWindow(timeWindow);
+}
+
+/*
+** setYScale
+** Sets the yScale of the data in the oscilloscope window.
+*/ 
+void ofxOscilloscope::setYScale(float yScale) {
+	_scopePlot.setYScale(yScale);
+}
+
+/*
+** getYScale
+** Gets the yScale of the data in the oscilloscope window.
+*/ 
+float ofxOscilloscope::getYScale() {
+	return _scopePlot.getYScale();
+}
+
+/*
+** setYOffset
+** Sets the yOffset of the data in the oscilloscope window.
+*/ 
+void ofxOscilloscope::setYOffset(float yOffset) {
+	_scopePlot.setYOffset(yOffset);
+}
+
+/*
+** getYOffset
+** Gets the yOffset of the data in the oscilloscope window.
+*/ 
+float ofxOscilloscope::getYOffset() {
+	return _scopePlot.getYOffset();
+}
+
+
+/*
+** updateData
+**
+** Data should come in the form[nVariables] with one data point/variable
+**
+** Loads new data onto the oscillocope buffer. Must have the same number
+** of variables initialized with setup. plot() may be called to display the 
+** updated buffer.
+*/
+void ofxOscilloscope::updateData(std::vector<float> data) {
+#ifdef DEBUG_PRINT
+	printf("ofxOscilloscope::updateData\n"); 
+#endif
+	_scopePlot.updateData(data);
+}
 
 /*
 ** updateData
@@ -389,7 +691,7 @@ void ofxOscilloscope::updateData(std::vector<std::vector<float> > data) {
 #ifdef DEBUG_PRINT
 	printf("ofxOscilloscope::updateData\n"); 
 #endif
-	_scope.updateData(data);
+	_scopePlot.updateData(data);
 }
 
 /*
@@ -407,7 +709,7 @@ void ofxOscilloscope::updateData(float ** data, int nPoints) {
 #ifdef DEBUG_PRINT
 	printf("ofxOscilloscope::updateData\n"); 
 #endif
-	_scope.updateData(data, nPoints);
+	_scopePlot.updateData(data, nPoints);
 }
 
 
@@ -416,33 +718,40 @@ void ofxOscilloscope::updateData(float ** data, int nPoints) {
 ** Plots the data in the buffer
 */
 void ofxOscilloscope::plot(){
-	for (int i=0; i<_scope.getNumVariables(); i++) {
 
+	// Legend Background
+	ofEnableAlphaBlending();
+	ofSetColor(_backgroundColor);
+	ofPoint legendMax = ofPoint(_min.x + _legendWidth, _max.y);
+	ofRect(ofRectangle(_min, legendMax));
+	ofDisableAlphaBlending(); 
+
+	for (int i=0; i<_scopePlot.getNumVariables(); i++) {
 		// Legend
-		ofSetColor(_scope.getVariableColor(i));
+		ofSetColor(_scopePlot.getVariableColor(i));
 		_legendFont.drawString(getVariableName(i), 
 			_min.x + _legendPadding, _min.y + _legendPadding + _textSpacer*(i+1));
-
-		// Timescale
-		ofSetColor(200,200,200);
-		_legendFont.drawString(ofToString(_scope.getTimeWindow()) + " sec", 
-			_min.x + _legendWidth + _legendPadding, 
-			_max.y - _legendPadding);
-
-		// Legend outline
-		ofLine(_min.x,					_min.y,	_min.x,					_max.y);
-		ofLine(_min.x,					_max.y,	_min.x + _legendWidth,	_max.y);
-		ofLine(_min.x + _legendWidth,	_max.y,	_min.x + _legendWidth,	_min.y);
-		ofLine(_min.x + _legendWidth,	_min.y,	_min.x,					_min.y);
-
-		// Scope outline
-		//ofLine(_min.x, _min.y, _min.x, _max.y);
-		ofLine(_min.x + _legendWidth,	_max.y, _max.x,					_max.y);
-		ofLine(_max.x,					_max.y,	_max.x,					_min.y);
-		ofLine(_max.x + _legendWidth,	_min.y, _min.x + _legendWidth,	_min.y);
-
-		_scope.plot();
 	}
+
+	_scopePlot.plot();
+
+	// Legend outline
+	ofLine(_min.x,					_min.y,	_min.x,					_max.y);
+	ofLine(_min.x,					_max.y,	_min.x + _legendWidth,	_max.y);
+	ofLine(_min.x + _legendWidth,	_max.y,	_min.x + _legendWidth,	_min.y);
+	ofLine(_min.x + _legendWidth,	_min.y,	_min.x,					_min.y);
+
+	// Scope outline
+	//ofLine(_min.x, _min.y, _min.x, _max.y);
+	ofLine(_min.x + _legendWidth,	_max.y, _max.x,					_max.y);
+	ofLine(_max.x,					_max.y,	_max.x,					_min.y);
+	ofLine(_max.x,					_min.y, _min.x + _legendWidth,	_min.y);
+
+	// Timescale
+	ofSetColor(_outlineColor);
+	_legendFont.drawString(ofToString(_scopePlot.getTimeWindow()) + " sec", 
+	_min.x + _legendWidth + _legendPadding, 
+	_max.y - _legendPadding);
 }
 
 /*
@@ -472,16 +781,35 @@ ofxMultiScope::ofxMultiScope() {
 /*
 ** ofxMultiScope 
 */
-ofxMultiScope::ofxMultiScope(int numScopes, ofPoint min, ofPoint max, int legendWidth) {
-	_min = min;
-	_max = max;
-	_numScopes = numScopes;
-	scopes.resize(_numScopes);
-	for (int i=0; i<_numScopes; i++) {
-		ofPoint sMin(min.x, min.y + i*(max.y - min.y)/_numScopes);
-		ofPoint sMax(max.x, min.y + (i+1)*(max.y - min.y)/_numScopes);
-		scopes.at(i) = ofxOscilloscope(sMin, sMax, legendWidth);
-	}
+ofxMultiScope::ofxMultiScope(int numScopes, ofRectangle scopeArea, ofTrueTypeFont legendFont, 
+	int legendWidth, ofColor outlineColor, ofColor zeroLineColor, ofColor backgroundColor) {
+		_min = scopeArea.getTopLeft();
+		_max = scopeArea.getBottomRight();
+		_numScopes = numScopes;
+		scopes.resize(_numScopes);
+		for (int i=0; i<_numScopes; i++) {
+			ofPoint sMin(_min.x, _min.y + i*(_max.y - _min.y)/_numScopes);
+			ofPoint sMax(_max.x, _min.y + (i+1)*(_max.y - _min.y)/_numScopes);
+			scopes.at(i) = ofxOscilloscope(sMin, sMax, legendFont, legendWidth, 
+				outlineColor, zeroLineColor);
+		}
+}
+
+/*
+** ofxMultiScope 
+*/
+ofxMultiScope::ofxMultiScope(int numScopes, ofPoint min, ofPoint max, ofTrueTypeFont legendFont, 
+	int legendWidth, ofColor outlineColor, ofColor zeroLineColor, ofColor backgroundColor) {
+		_min = min;
+		_max = max;
+		_numScopes = numScopes;
+		scopes.resize(_numScopes);
+		for (int i=0; i<_numScopes; i++) {
+			ofPoint sMin(_min.x, _min.y + i*(_max.y - _min.y)/_numScopes);
+			ofPoint sMax(_max.x, _min.y + (i+1)*(_max.y - _min.y)/_numScopes);
+			scopes.at(i) = ofxOscilloscope(sMin, sMax, legendFont, legendWidth, 
+				outlineColor, zeroLineColor);
+		}
 }
 
 /*
@@ -494,12 +822,97 @@ ofxMultiScope::~ofxMultiScope() {
 ** TODO setTimeWindow 
 */
 void ofxMultiScope::setTimeWindow(float timeWindow) {
+	for (int i=0; i<_numScopes; i++) {
+		scopes.at(i).setTimeWindow(timeWindow);
+	}
 }
 
 /*
-** TODO: setSize 
+** setOutlineColor
+** Sets the color of the scope outlines
 */
-void ofxMultiScope::setSize(ofPoint min, ofPoint max) {
+void ofxMultiScope::setOutlineColor(ofColor outlineColor) {
+	for (int i=0; i<_numScopes; i++) {
+		scopes.at(i).setOutlineColor(outlineColor);
+	}
+}
+
+/*
+** setZeroLineColor
+** Sets the color of the scope zero line
+*/
+void ofxMultiScope::setZeroLineColor(ofColor zeroLineColor) {
+	for (int i=0; i<_numScopes; i++) {
+		scopes.at(i).setZeroLineColor(zeroLineColor);
+	}
+}
+
+/*
+** setBackgroundColor
+** Sets the color of the background.
+*/
+void ofxMultiScope::setBackgroundColor(ofColor backgroundColor) {
+	for (int i=0; i<_numScopes; i++) {
+		scopes.at(i).setBackgroundColor(backgroundColor);
+	}
+}
+
+/*
+** setLegendFont
+** Sets the font used for the legend text
+*/ 
+void ofxMultiScope::setLegendFont(ofTrueTypeFont legendFont) {
+	for (int i=0; i<_numScopes; i++) {
+		scopes.at(i).setLegendFont(legendFont);
+	}
+}
+
+/*
+** setLegendWidth
+** Sets the width of the legend
+*/ 
+void ofxMultiScope::setLegendWidth(int legendWidth) {
+	for (int i=0; i<_numScopes; i++) {
+		scopes.at(i).setLegendWidth(legendWidth);
+	}
+}
+
+/*
+** setTextSpacing
+** Sets the spacing of text in the legend.
+** legendPadding is the padding between the legend borders and the text.
+** textSpacing the spacing between the text of the variable names.
+*/ 
+void ofxMultiScope::setTextSpacing(int legendPadding, int textSpacing) {
+	for (int i=0; i<_numScopes; i++) {
+		scopes.at(i).setTextSpacing(legendPadding, textSpacing);
+	}
+}
+
+/*
+** setPosition
+** Sets the position of the multiScope window.
+*/ 
+void ofxMultiScope::setPosition(ofPoint min, ofPoint max) {
+	_min = min;
+	_max = max;
+	for (int i=0; i<_numScopes; i++) {
+		ofPoint sMin(min.x, min.y + i*(max.y - min.y)/_numScopes);
+		ofPoint sMax(max.x, min.y + (i+1)*(max.y - min.y)/_numScopes);
+		scopes.at(i).setPosition(sMin, sMax);
+	}
+}
+void ofxMultiScope::setPosition(ofRectangle scopeArea) {
+	setPosition(scopeArea.getTopLeft(), scopeArea.getBottomRight());
+}
+
+/*
+** getPosition
+** gets the rectangle defining the position of the oscilloscope window.
+*/ 
+ofRectangle ofxMultiScope::getPosition() {
+	ofRectangle rect = ofRectangle((const ofPoint) _min, (const ofPoint) _max);
+	return rect;
 }
 
 /*
