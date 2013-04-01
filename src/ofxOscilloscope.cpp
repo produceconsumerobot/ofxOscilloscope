@@ -834,16 +834,20 @@ void ofxOscilloscope::plot(){
 	ofDisableAlphaBlending(); 
 
 	for (int i=0; i<_scopePlot.getNumVariables(); i++) {
-		// Legend
+		// Legend Text
 		ofSetColor(_scopePlot.getVariableColor(i));
 		_legendFont.drawString(getVariableName(i), 
 			_min.x + _legendPadding, _min.y + _legendPadding + _textSpacer*(i+1));
 	}	
 
+	// Sets the zero line width when called before plot()
+	ofSetLineWidth(_outlineWidth);
+
 	// Plot the Data
 	_scopePlot.plot();
 
 	ofSetColor(_outlineColor);
+	ofSetLineWidth(_outlineWidth);
 
 	ofEnableAlphaBlending();
 
@@ -938,6 +942,26 @@ ofxMultiScope::~ofxMultiScope() {
 void ofxMultiScope::setTimeWindow(float timeWindow) {
 	for (int i=0; i<_numScopes; i++) {
 		scopes.at(i).setTimeWindow(timeWindow);
+	}
+}
+
+/*
+** setPlotLineWidth
+** Sets the line width of the plotted data
+*/
+void ofxMultiScope::setPlotLineWidth(float plotLineWidth) {
+	for (int i=0; i<_numScopes; i++) {
+		scopes.at(i).setPlotLineWidth(plotLineWidth);
+	}
+}
+
+/*
+** setOutlineWidth
+** Sets the line width of the scope outlines
+*/
+void ofxMultiScope::setOutlineWidth(float outlineWidth) {
+	for (int i=0; i<_numScopes; i++) {
+		scopes.at(i).setOutlineWidth(outlineWidth);
 	}
 }
 

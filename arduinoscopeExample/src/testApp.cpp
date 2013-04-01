@@ -22,13 +22,34 @@ void testApp::setup(){
 	ofTrueTypeFont legendFont;
 	legendFont.loadFont("verdana.ttf", 12, true, true);
 
+	// pins
+	// timeWindow
+	// yScale
+	// yOffset
+	// colors
+	// names
 
-	int nScopes = 2;
+	// Setup Arduino
+	string arduinoPort = "\\\\.\\COM10";
+	arduino.connect(arduinoPort, 57600);
+	while(!arduino.isArduinoReady()); 
+	arduino.sendAnalogPinReporting(0, ARD_ANALOG);
+	arduino.sendAnalogPinReporting(1, ARD_ANALOG);
+	arduino.sendAnalogPinReporting(2, ARD_ANALOG);
+	arduino.sendAnalogPinReporting(3, ARD_ANALOG);
+	arduino.sendAnalogPinReporting(4, ARD_ANALOG);
+	arduino.update();
+
+	// Log Directory
+	logDirPath = "../LogData/";
+	logger.setDirPath(logDirPath);
+
+	nScopes = 2;
 	ofRectangle scopeArea = ofRectangle(ofPoint(0,0), ofGetWindowSize());
 	scopeWin = ofxMultiScope(nScopes, scopeArea, legendFont); // Setup the multiScope panel
 
-	samplingFreq = 10.; // Sampling rate (Hz)
-	{ // Scope 0 setup
+	samplingFreq = 50.; // Sampling rate (Hz)
+	{ // Scope 1 setup
 		const int nVariables = 3;
 		nPlotsScope0 = nVariables;
 		float timeWindow = 5.; // seconds
@@ -42,7 +63,7 @@ void testApp::setup(){
 		scopeWin.scopes.at(0).setup(timeWindow, samplingFreq, vec_names, vec_colors, 
 			yScale, yOffset); // Setup each oscilloscope panel
 	}
-	{ // Scope 1 setup
+	{ // Scope 2 setup
 		const int nVariables = 2;
 		nPlotsScope1 = nVariables;
 		float timeWindow = 10.; // seconds
@@ -59,65 +80,92 @@ void testApp::setup(){
 
 	selectedScope = 0; // Select all scopes for increment/decrement
 
-	// Setup Arduino
-	string arduinoPort = "\\\\.\\COM10";
-	arduino.connect(arduinoPort, 57600);
-	while(!arduino.isArduinoReady()); 
-	arduino.sendAnalogPinReporting(0, ARD_ANALOG);
-	arduino.sendAnalogPinReporting(1, ARD_ANALOG);
-	arduino.sendAnalogPinReporting(2, ARD_ANALOG);
-	arduino.sendAnalogPinReporting(3, ARD_ANALOG);
-	arduino.sendAnalogPinReporting(4, ARD_ANALOG);
+	isPaused = false;
+	isRecording = false;
+	loopTimer = (unsigned long) ofGetElapsedTimeMillis();
 
-	arduino.update();
+	logger.startThread();
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-	arduino.update();
+	unsigned long now = (unsigned long) ofGetElapsedTimeMillis();
+	unsigned long loopDuration = (now - loopTimer);
+	if (loopDuration >= (1000/samplingFreq) ) {
+		loopTimer = now;
+		cout << "loop duration: " << loopDuration << "\n";
 
-	// Scope 1 - Analog Data
-	vector<float> analogData1;
-	analogData1.resize(nPlotsScope0);
-	for (int i=0; i<nPlotsScope0; i++) {
-		analogData1.at(i) = (arduino.getAnalog(i));
-	}
-	scopeWin.scopes.at(0).updateData(analogData1);
+		arduino.update();
 
-	// Scope 2 - Digital Data
-	vector<float> analogData2;
-	analogData2.resize(nPlotsScope1);
-	for (int i=0; i<nPlotsScope1; i++) {
-		analogData2.at(i) = (arduino.getAnalog(i+nPlotsScope0));
+		std::stringstream logData;
+		logData << now << ",";
+
+		// Scope 1 - Analog Data
+		vector<float> analogData1;
+		analogData1.resize(nPlotsScope0);
+		for (int i=0; i<nPlotsScope0; i++) {
+			analogData1.at(i) = (arduino.getAnalog(i));
+			logData << analogData1.at(i) << ",";
+		}
+		if (!isPaused) {
+			scopeWin.scopes.at(0).updateData(analogData1);
+		}
+
+		// Scope 2 - Analog Data
+		vector<float> analogData2;
+		analogData2.resize(nPlotsScope1);
+		for (int i=0; i<nPlotsScope1; i++) {
+			analogData2.at(i) = (arduino.getAnalog(i+nPlotsScope0));
+			logData << analogData2.at(i) << ",";
+		}
+
+		if (!isPaused) {
+			scopeWin.scopes.at(1).updateData(analogData2);
+		}
+
+		if (isRecording) {
+			logData << "\n";
+			if (logger.isThreadRunning()) { // Threaded logging to improve speed
+				logger.lock();
+				logger.loggerQueue.push(logData.str());
+				logger.unlock();
+			} else {
+				// Unthreaded logging
+				logger.log(logData.str());
+			}
+
+		}
 	}
-	scopeWin.scopes.at(1).updateData(analogData2);
+
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
+	if (isRecording) {
+		// Show "RECORDING" on panel
+		ofTrueTypeFont font;
+		font.loadFont("verdana.ttf", 12, true, true);
+		ofSetColor(255, 0, 0);
+		ofRectangle panelRect = scopeWin.getPosition();
+		ofPoint br = panelRect.getBottomRight();
+		string text = "RECORDING";
+		ofRectangle textBox = font.getStringBoundingBox(text,0,0);
+		float pad = 10.;
+		font.drawString(text, br.x-pad-textBox.width, br.y-pad-textBox.height);
+	}
 	scopeWin.plot();
-	ofSleepMillis(1000/samplingFreq);
 }
 
 //--------------------------------------------------------------
 void testApp::exit(){
 	printf("exit()");
+	logger.waitForThread(true);
+
 	arduino.disconnect();
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-	
-	// Choose an oscilloscope panel for changing yScale/yOffset/timeWindow
-	// Starts counting from 1
-	// Zero = all
-	if ((key >= 48) && (key <= 57)){
-		int number = key - 48;
-		if (number <= nScopes) {
-			selectedScope = number;
-		}
-	}
-	
 	
 	// Increment the yScale
 	if (key == '+') {
@@ -172,8 +220,36 @@ void testApp::keyPressed(int key){
 			scopeWin.scopes.at(selectedScope - 1).decrementTimeWindow();
 		}
 	}
+}
+
+//--------------------------------------------------------------
+void testApp::keyReleased(int key){
+	cout << "Key Released: " << key << "\n";
+
+	// Choose an oscilloscope panel for changing yScale/yOffset/timeWindow
+	// Starts counting from 1
+	// Zero = all
+	if ((key >= 48) && (key <= 57)){
+		int number = key - 48;
+		if (number <= nScopes) {
+			selectedScope = number;
+			scopeWin.setOutlineWidth(1);
+			if (selectedScope > 0) {
+				scopeWin.scopes.at(selectedScope - 1).setOutlineWidth(5);
+			}
+		}
+	}
+
+	if (key == 'r') {
+		isRecording = !isRecording;
+	}
+
+	if (key == 32) { // Space Bar
+		isPaused = !isPaused;
+	}
 
 
+	
 	/*
 	// testing yScale
 	if (key == '1') {
@@ -191,11 +267,8 @@ void testApp::keyPressed(int key){
 		scopeWin.scopes.at(1).setYOffset(scopeWin.scopes.at(1).getYOffset() + 10); 
 	}
 	*/
-}
 
-//--------------------------------------------------------------
-void testApp::keyReleased(int key){
-
+/*
 	// testing setVariableNames
 	if (key == 'n') {
 		const int nVariables = 2;
@@ -329,6 +402,7 @@ void testApp::keyReleased(int key){
 	if (key == 'r') {
 		scopeWin.scopes.at(1).setTextSpacing(20, 10);
 	}
+	*/
 }
 
 

@@ -31,4 +31,6 @@ class testApp : public ofBaseApp{
 		ofPoint max;
 
 		int selectedScope;
+
+		bool isPaused;
 };

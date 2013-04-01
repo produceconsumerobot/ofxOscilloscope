@@ -107,6 +107,7 @@ private:
 	ofColor _outlineColor;
 	float _outlineWidth;
 	ofColor _backgroundColor;
+
 public:
 	// Constructors
 	ofxOscilloscope(ofRectangle scopeArea, 
@@ -139,44 +140,44 @@ public:
 	void plot();
 
 	// Setters/Getters
-	void setVariableNames(std::vector<string> variableNames);
-	void setVariableNames(string variableNames[], int nVariables);
+	void setVariableNames(std::vector<string> variableNames);		// Variable names
+	void setVariableNames(string variableNames[], int nVariables);	// Variable names
 
-	void setVariableColors(std::vector<ofColor> colors);
-	void setVariableColors(ofColor colors[], int nColors);
+	void setVariableColors(std::vector<ofColor> colors);			// Variable colors
+	void setVariableColors(ofColor colors[], int nColors);			// Variable colors
 
-	void setTimeWindow(float timeWindow);
-	float getTimeWindow();
-	void setPosition(ofPoint min, ofPoint max);
-	void setPosition(ofRectangle scopeArea);
-	ofRectangle getPosition();
+	void setTimeWindow(float timeWindow);		// Duration of displayed data window (seconds)
+	float getTimeWindow();						// Duration of displayed data window (seconds)
+	void setPosition(ofPoint min, ofPoint max);	// Position of the scope panel
+	void setPosition(ofRectangle scopeArea);	// Position of the scope panel
+	ofRectangle getPosition();					// Position of the scope panel
 	//void setPosition(ofPoint center, int height, int width);
 
-	void setPlotLineWidth(float plotLineWidth);
-	void setOutlineWidth(float outlineWidth);
-	void setOutlineColor(ofColor outlineColor);
-	void setZeroLineColor(ofColor zeroLineColor);
-	void setBackgroundColor(ofColor backgroundColor);
+	void setPlotLineWidth(float plotLineWidth);			// Line width of plot data
+	void setOutlineWidth(float outlineWidth);			// Line width of scope outlines
+	void setOutlineColor(ofColor outlineColor);			// Line color of scope outlines
+	void setZeroLineColor(ofColor zeroLineColor);		// Line color of scope zero lines
+	void setBackgroundColor(ofColor backgroundColor);	// Background color of scopes
 
-	void setLegendFont(ofTrueTypeFont legendFont);
-	void setLegendWidth(int legendWidth);
-	void setTextSpacing(int legendPadding, int textSpacing);
-	
-	void setYScale(float yScale);
-	float getYScale();
-	void setYOffset(float yOffset);
-	float getYOffset();
+	void setLegendFont(ofTrueTypeFont legendFont);				// Legend font
+	void setLegendWidth(int legendWidth);						// Width of legend
+	void setTextSpacing(int legendPadding, int textSpacing);	// Vertical spacing of legend text
 
-	float incrementYScale();
-	float decrementYScale();
-	float incrementYOffset();
-	float decrementYOffset();
-	float incrementTimeWindow();
-	float decrementTimeWindow();
-	
-	string getVariableName(int i);
+	void setYScale(float yScale);	// yScale of plotted data
+	float getYScale();				// yScale of plotted data
+	void setYOffset(float yOffset);	// yScale of plotted data
+	float getYOffset();				// yScale of plotted data
 
-	static float round(float number) {
+	float incrementYScale();		// Change yScale of plotted data
+	float decrementYScale();		// Change yScale of plotted data
+	float incrementYOffset();		// Change y“ffset of plotted data
+	float decrementYOffset();		// Change y“ffset of plotted data
+	float incrementTimeWindow();	// Change duration of displayed data window
+	float decrementTimeWindow();	// Change duration of displayed data window
+
+	string getVariableName(int i);	// Name of a selected variable
+
+	static float round(float number) {	// General purpose function that should be built in
 		return number < 0.0 ? ceil(number - 0.5) : floor(number + 0.5);
 	}
 };
@@ -213,25 +214,27 @@ public:
 	void plot();
 
 	// Setters/Getters
-	void setTimeWindow(float timeWindow);
-	void setPosition(ofPoint min, ofPoint max);
-	void setPosition(ofRectangle scopeArea);
-	ofRectangle getPosition();
+	void setTimeWindow(float timeWindow);		// Duration of displayed data window (seconds)
+	void setPosition(ofPoint min, ofPoint max);	// Position of the multiScope panel
+	void setPosition(ofRectangle scopeArea);	// Position of the multiScope panel
+	ofRectangle getPosition();					// Position of the multiScope panel
 
-	void setOutlineColor(ofColor outlineColor);
-	void setZeroLineColor(ofColor zeroLineColor);
-	void setBackgroundColor(ofColor backgroundColor);
+	void setPlotLineWidth(float plotLineWidth);			// Line width of plot data
+	void setOutlineWidth(float outlineWidth);			// Line width of scope outlines
+	void setOutlineColor(ofColor outlineColor);			// Line color of scope outlines
+	void setZeroLineColor(ofColor zeroLineColor);		// Line color of scope zero lines
+	void setBackgroundColor(ofColor backgroundColor);	// Background color of scopes
 
-	void setLegendFont(ofTrueTypeFont legendFont);
-	void setLegendWidth(int legendWidth);
-	void setTextSpacing(int legendPadding, int textSpacing);
+	void setLegendFont(ofTrueTypeFont legendFont);				// Legend font
+	void setLegendWidth(int legendWidth);						// Width of legend
+	void setTextSpacing(int legendPadding, int textSpacing);	// Vertical spacing of legend text
 
-	vector<float> incrementYScale();
-	vector<float> decrementYScale();
-	vector<float> incrementYOffset();
-	vector<float> decrementYOffset();
-	vector<float> incrementTimeWindow();
-	vector<float> decrementTimeWindow();
+	vector<float> incrementYScale();		// Change yScale of plotted data
+	vector<float> decrementYScale();		// Change yScale of plotted data
+	vector<float> incrementYOffset();		// Change y“ffset of plotted data
+	vector<float> decrementYOffset();		// Change y“ffset of plotted data
+	vector<float> incrementTimeWindow();	// Change duration of displayed data window
+	vector<float> decrementTimeWindow();	// Change duration of displayed data window
 
 };
 

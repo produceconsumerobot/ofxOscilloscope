@@ -8,7 +8,10 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxOscilloscope\src\ofxOscilloscope.cpp">
-      <Filter>addons\src</Filter>
+      <Filter>addons\ofxOscilloscope\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxThreadedLogger\src\ofxThreadedLogger.cpp">
+      <Filter>addons\ofxThreadedLogger\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -18,8 +21,17 @@
     <Filter Include="addons">
       <UniqueIdentifier>{52da0d6d-751d-4b24-ab60-495f1907a30c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\src">
+    <Filter Include="addons\ofxOscilloscope">
+      <UniqueIdentifier>{032ad857-d4b0-4115-80a0-2c1b913f7510}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOscilloscope\src">
       <UniqueIdentifier>{57a0a95b-6e7f-4a01-8336-a7a8157dddda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxThreadedLogger">
+      <UniqueIdentifier>{a5d7e0fb-982f-496d-b1bf-1630a30ce911}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxThreadedLogger\src">
+      <UniqueIdentifier>{de69f903-9fcd-4028-8f67-52f3d8d08ec0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -27,7 +39,10 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxOscilloscope\src\ofxOscilloscope.h">
-      <Filter>addons\src</Filter>
+      <Filter>addons\ofxOscilloscope\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxThreadedLogger\src\ofxThreadedLogger.h">
+      <Filter>addons\ofxThreadedLogger\src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

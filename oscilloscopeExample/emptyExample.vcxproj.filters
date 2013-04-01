@@ -8,7 +8,7 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxOscilloscope\src\ofxOscilloscope.cpp">
-      <Filter>addons\src</Filter>
+      <Filter>addons\ofxOscilloscope\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -18,7 +18,10 @@
     <Filter Include="addons">
       <UniqueIdentifier>{52da0d6d-751d-4b24-ab60-495f1907a30c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\src">
+    <Filter Include="addons\ofxOscilloscope">
+      <UniqueIdentifier>{b25a1527-d549-467d-9d83-b1f2f7424954}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOscilloscope\src">
       <UniqueIdentifier>{57a0a95b-6e7f-4a01-8336-a7a8157dddda}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -27,7 +30,7 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxOscilloscope\src\ofxOscilloscope.h">
-      <Filter>addons\src</Filter>
+      <Filter>addons\ofxOscilloscope\src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

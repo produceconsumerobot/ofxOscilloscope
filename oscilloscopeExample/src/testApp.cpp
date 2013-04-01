@@ -38,6 +38,8 @@ void testApp::setup(){
 	counter2 = 0;
 
 	selectedScope = 0; // Select all scopes for increment/decrement
+
+	isPaused = false;
 }
 
 //--------------------------------------------------------------
@@ -71,10 +73,11 @@ void testApp::draw(){
 		}
 	}
 	*/
-
-	for (int i=0; i<nScopes; i++) {
-		scopeWin.scopes.at(i).updateData(data);
-		//scopeWin.scopes.at(i).updateData(array_data, data.at(0).size());
+	if (!isPaused) {
+		for (int i=0; i<nScopes; i++) {
+			scopeWin.scopes.at(i).updateData(data);
+			//scopeWin.scopes.at(i).updateData(array_data, data.at(0).size());
+		}
 	}
 
 	/*
@@ -98,22 +101,6 @@ void testApp::exit(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-	cout << "Key Pressed: " << key << "\n";
-
-	if (key == '0') {
-		zeroData = true;
-	}
-	
-	// Choose an oscilloscope panel for changing yScale/yOffset/timeWindow
-	// Starts counting from 1
-	// Zero = all
-	if ((key >= 48) && (key <= 57)){
-		int number = key - 48;
-		if (number <= nScopes) {
-			selectedScope = number;
-		}
-	}
-	
 	
 	// Increment the yScale
 	if (key == '+') {
@@ -168,30 +155,29 @@ void testApp::keyPressed(int key){
 			scopeWin.scopes.at(selectedScope - 1).decrementTimeWindow();
 		}
 	}
-
-
-	/*
-	// testing yScale
-	if (key == '1') {
-		scopeWin.scopes.at(1).setYScale(scopeWin.scopes.at(1).getYScale() / 2); 
-	}
-	if (key == '2') {
-		scopeWin.scopes.at(1).setYScale(scopeWin.scopes.at(1).getYScale() * 2); 
-	}
-
-	// testing yOffset
-	if (key == '3') {
-		scopeWin.scopes.at(1).setYOffset(scopeWin.scopes.at(1).getYOffset() - 10); 
-	}
-	if (key == '4') {
-		scopeWin.scopes.at(1).setYOffset(scopeWin.scopes.at(1).getYOffset() + 10); 
-	}
-	*/
 }
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){
 	cout << "Key Released: " << key << "\n";
+
+	// Choose an oscilloscope panel for changing yScale/yOffset/timeWindow
+	// Starts counting from 1
+	// Zero = all
+	if ((key >= 48) && (key <= 57)){
+		int number = key - 48;
+		if (number <= nScopes) {
+			selectedScope = number;
+			scopeWin.setOutlineWidth(1);
+			if (selectedScope > 0) {
+				scopeWin.scopes.at(selectedScope - 1).setOutlineWidth(5);
+			}
+		}
+	}
+
+	if (key == 32) { // Space Bar
+		isPaused = !isPaused;
+	}
 
 
 	// testing line widths

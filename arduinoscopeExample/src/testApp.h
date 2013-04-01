@@ -18,6 +18,7 @@
 
 #include "ofMain.h"
 #include "ofxOscilloscope.h"
+#include "ofxThreadedLogger.h"
 
 class testApp : public ofBaseApp{
 	public:
@@ -45,4 +46,13 @@ class testApp : public ofBaseApp{
 		int nPlotsScope1;
 		float samplingFreq;
 		int selectedScope;
+
+		// Data Logger
+		LoggerThread logger;
+		string logDirPath;
+
+		bool isPaused;
+		bool isRecording;
+
+		unsigned long loopTimer;
 };
