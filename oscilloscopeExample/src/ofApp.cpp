@@ -1,18 +1,18 @@
-#include "testApp.h"
+#include "ofApp.h"
 
 //--------------------------------------------------------------
-void testApp::setup(){
-	ofBackground(255,255,255);
+void ofApp::setup() {
+	ofBackground(255, 255, 255);
 	ofTrueTypeFont legendFont;
-	legendFont.loadFont("verdana.ttf", 12, true, true);
+	legendFont.load("verdana.ttf", 12, true, true);
 
 	const int nVariables = 2;
 	newPoints = 23;
-	
-	ofColor colors[nVariables] = {ofColor(0,0,0), ofColor(255,0,0)};
+
+	ofColor colors[nVariables] = { ofColor(0,0,0), ofColor(255,0,0) };
 	std::vector<ofColor> vec_colors(colors, colors + nVariables);
 
-	string names[2] = {"happy", "joy"};
+	string names[2] = { "happy", "joy" };
 	std::vector<string> vec_names(names, names + nVariables);
 
 	nScopes = 5;
@@ -20,13 +20,13 @@ void testApp::setup(){
 	float samplingFreqMult = 100;
 	float yScale = 1.; // yScale multiplier
 	float yOffset = 0.; // yOffset from the center of the scope window
-	ofRectangle scopeArea = ofRectangle(ofPoint(0,0), ofGetWindowSize());
+	ofRectangle scopeArea = ofRectangle(ofPoint(0, 0), ofGetWindowSize());
 
 	scopeWin = ofxMultiScope(nScopes, scopeArea, legendFont); // Setup the multiScope panel
 
-	for (int i=0; i<nScopes; i++) {
+	for (int i = 0; i<nScopes; i++) {
 		// Setup the oscilloscopes
-		scopeWin.scopes.at(i).setup(timeWindow, (i+1)*samplingFreqMult, vec_names, vec_colors, 
+		scopeWin.scopes.at(i).setup(timeWindow, (i + 1)*samplingFreqMult, vec_names, vec_colors,
 			yScale, yOffset); // Setup each oscilloscope panel
 	}
 
@@ -43,48 +43,49 @@ void testApp::setup(){
 }
 
 //--------------------------------------------------------------
-void testApp::update(){
+void ofApp::update() {
 
 }
 
 //--------------------------------------------------------------
-void testApp::draw(){
+void ofApp::draw() {
 	//printf("draw()\n");
 
 	if (zeroData) {
 		data.at(0).assign(data.at(0).size(), 0.);
-	} else {
-		for (int i=0; i<newPoints; i++) {
-			data.at(0).at(i) = counter; counter++; if(counter>ofGetWindowSize().y/2) counter=-ofGetWindowSize().y/2;// + ofRandomf()
+	}
+	else {
+		for (int i = 0; i<newPoints; i++) {
+			data.at(0).at(i) = counter; counter++; if (counter>ofGetWindowSize().y / 2) counter = -ofGetWindowSize().y / 2;// + ofRandomf()
 		}
 	}
-	for (int i=0; i<newPoints; i++) {
-		data.at(1).at(i) = counter2; counter2--; if(counter2<-50) counter2=50;// + ofRandomf()
+	for (int i = 0; i<newPoints; i++) {
+		data.at(1).at(i) = counter2; counter2--; if (counter2<-50) counter2 = 50;// + ofRandomf()
 	}
 
 	/*
-	// Code for Testing arrays... 
+	// Code for Testing arrays...
 	// DON'T USE ARRAYS UNLESS YOU WANT A HEADACHE
 	float ** array_data = new float*[data.size()];
 	for (int i=0; i<data.size(); i++) {
-		array_data[i] = new float[data.at(i).size()];
-		for (int j=0; j<data.at(i).size(); j++) {
-			array_data[i][j] = data.at(i).at(j);
-		}
+	array_data[i] = new float[data.at(i).size()];
+	for (int j=0; j<data.at(i).size(); j++) {
+	array_data[i][j] = data.at(i).at(j);
+	}
 	}
 	*/
 	if (!isPaused) {
-		for (int i=0; i<nScopes; i++) {
+		for (int i = 0; i<nScopes; i++) {
 			scopeWin.scopes.at(i).updateData(data);
 			//scopeWin.scopes.at(i).updateData(array_data, data.at(0).size());
 		}
 	}
 
 	/*
-	// Code for Testing arrays... 
+	// Code for Testing arrays...
 	// DON'T USE ARRAYS UNLESS YOU WANT A HEADACHE
 	for (int i=0; i<data.size(); i++) {
-		delete[] array_data[i];
+	delete[] array_data[i];
 	}
 	delete[] array_data;
 	*/
@@ -95,27 +96,29 @@ void testApp::draw(){
 }
 
 //--------------------------------------------------------------
-void testApp::exit(){
+void ofApp::exit() {
 	printf("exit()");
 }
 
 //--------------------------------------------------------------
-void testApp::keyPressed(int key){
-	
+void ofApp::keyPressed(int key) {
+
 	// Increment the yScale
 	if (key == '+') {
 		if (selectedScope == 0) {
 			scopeWin.incrementYScale();
-		} else {
+		}
+		else {
 			scopeWin.scopes.at(selectedScope - 1).incrementYScale();
 		}
 	}
-	
+
 	// Decrement the yScale
 	if ((key == '-') || (key == '_')) {
 		if (selectedScope == 0) {
 			scopeWin.decrementYScale();
-		} else {
+		}
+		else {
 			scopeWin.scopes.at(selectedScope - 1).decrementYScale();
 		}
 	}
@@ -124,16 +127,18 @@ void testApp::keyPressed(int key){
 	if (key == 357) { // Up Arrow
 		if (selectedScope == 0) {
 			scopeWin.incrementYOffset();
-		} else {
+		}
+		else {
 			scopeWin.scopes.at(selectedScope - 1).incrementYOffset();
 		}
 	}
-	
+
 	// Decrement the yOffset
 	if (key == 359) { // Down Arrow
 		if (selectedScope == 0) {
 			scopeWin.decrementYOffset();
-		} else {
+		}
+		else {
 			scopeWin.scopes.at(selectedScope - 1).decrementYOffset();
 		}
 	}
@@ -142,29 +147,31 @@ void testApp::keyPressed(int key){
 	if (key == 358) { // Right Arrow
 		if (selectedScope == 0) {
 			scopeWin.incrementTimeWindow();
-		} else {
+		}
+		else {
 			scopeWin.scopes.at(selectedScope - 1).incrementTimeWindow();
 		}
 	}
-	
+
 	// Decrement the timeWindow
 	if (key == 356) { // Left Arrow
 		if (selectedScope == 0) {
 			scopeWin.decrementTimeWindow();
-		} else {
+		}
+		else {
 			scopeWin.scopes.at(selectedScope - 1).decrementTimeWindow();
 		}
 	}
 }
 
 //--------------------------------------------------------------
-void testApp::keyReleased(int key){
+void ofApp::keyReleased(int key) {
 	cout << "Key Released: " << key << "\n";
 
 	// Choose an oscilloscope panel for changing yScale/yOffset/timeWindow
 	// Starts counting from 1
 	// Zero = all
-	if ((key >= 48) && (key <= 57)){
+	if ((key >= 48) && (key <= 57)) {
 		int number = key - 48;
 		if (number <= nScopes) {
 			selectedScope = number;
@@ -182,41 +189,41 @@ void testApp::keyReleased(int key){
 
 	// testing line widths
 	if (key == ',') {
-		scopeWin.scopes.at(1).setOutlineWidth(10); 
-		scopeWin.scopes.at(1).setPlotLineWidth(5); 
+		scopeWin.scopes.at(1).setOutlineWidth(10);
+		scopeWin.scopes.at(1).setPlotLineWidth(5);
 	}
 	if (key == '.') {
-		scopeWin.scopes.at(1).setOutlineWidth(1); 
-		scopeWin.scopes.at(1).setPlotLineWidth(1); 
+		scopeWin.scopes.at(1).setOutlineWidth(1);
+		scopeWin.scopes.at(1).setPlotLineWidth(1);
 	}
 
 
 	// testing setVariableNames
 	if (key == 'n') {
 		const int nVariables = 2;
-		string names[nVariables] = {"happy", "joy"};
+		string names[nVariables] = { "happy", "joy" };
 		std::vector<string> vec_names(names, names + nVariables);
-		scopeWin.scopes.at(1).setVariableNames(vec_names); 
+		scopeWin.scopes.at(1).setVariableNames(vec_names);
 	}
 	if (key == 'm') {
 		const int nVariables = 2;
-		string names[nVariables] = {"wow", "zing"};
+		string names[nVariables] = { "wow", "zing" };
 		std::vector<string> vec_names(names, names + nVariables);
-		scopeWin.scopes.at(1).setVariableNames(vec_names); 
+		scopeWin.scopes.at(1).setVariableNames(vec_names);
 	}
 
 	//testing setVariableColors
 	if (key == 'z') {
 		const int nVariables = 2;
-		ofColor colors[nVariables] = {ofColor(0,0,0), ofColor(255,0,0)};
+		ofColor colors[nVariables] = { ofColor(0,0,0), ofColor(255,0,0) };
 		std::vector<ofColor> vec_colors(colors, colors + nVariables);
-		scopeWin.scopes.at(1).setVariableColors(vec_colors); 
+		scopeWin.scopes.at(1).setVariableColors(vec_colors);
 	}
 	if (key == 'x') {
 		const int nVariables = 2;
-		ofColor colors[nVariables] = {ofColor(0,255,0), ofColor(255,255,0)};
+		ofColor colors[nVariables] = { ofColor(0,255,0), ofColor(255,255,0) };
 		std::vector<ofColor> vec_colors(colors, colors + nVariables);
-		scopeWin.scopes.at(1).setVariableColors(vec_colors); 
+		scopeWin.scopes.at(1).setVariableColors(vec_colors);
 	}
 
 	//testing setTimeWindow
@@ -254,43 +261,43 @@ void testApp::keyReleased(int key){
 
 	// testing backgroundColor
 	if (key == 'c') {
-		ofColor color = ofColor(0,0,0,0.);
+		ofColor color = ofColor(0, 0, 0, 0.);
 		scopeWin.setBackgroundColor(color);
 	}
 	if (key == 'v') {
-		ofColor color = ofColor(0,255,0,128);
+		ofColor color = ofColor(0, 255, 0, 128);
 		scopeWin.setBackgroundColor(color);
 	}
 	if (key == 'b') {
-		ofColor color = ofColor(0,0,255,128);
+		ofColor color = ofColor(0, 0, 255, 128);
 		scopeWin.scopes.at(1).setBackgroundColor(color);
 	}
 
 	// testing setOutlineColor
 	if (key == 'j') {
-		ofColor color = ofColor(0,0,0,255);
+		ofColor color = ofColor(0, 0, 0, 255);
 		scopeWin.setOutlineColor(color);
 	}
 	if (key == 'k') {
-		ofColor color = ofColor(0,255,0,128);
+		ofColor color = ofColor(0, 255, 0, 128);
 		scopeWin.setOutlineColor(color);
 	}
 	if (key == 'l') {
-		ofColor color = ofColor(0,0,255,128);
+		ofColor color = ofColor(0, 0, 255, 128);
 		scopeWin.scopes.at(1).setOutlineColor(color);
 	}
 
 	// testing setZeroLineColor
 	if (key == 'i') {
-		ofColor color = ofColor(0,0,0,255);
+		ofColor color = ofColor(0, 0, 0, 255);
 		scopeWin.setZeroLineColor(color);
 	}
 	if (key == 'o') {
-		ofColor color = ofColor(0,255,0,128);
+		ofColor color = ofColor(0, 255, 0, 128);
 		scopeWin.setZeroLineColor(color);
 	}
 	if (key == 'p') {
-		ofColor color = ofColor(0,0,255,128);
+		ofColor color = ofColor(0, 0, 255, 128);
 		scopeWin.scopes.at(1).setZeroLineColor(color);
 	}
 
@@ -328,36 +335,36 @@ void testApp::keyReleased(int key){
 
 
 //--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y){
+void ofApp::mouseMoved(int x, int y) {
 
 }
 
 //--------------------------------------------------------------
-void testApp::mouseDragged(int x, int y, int button){
+void ofApp::mouseDragged(int x, int y, int button) {
 
 }
 
 //--------------------------------------------------------------
-void testApp::mousePressed(int x, int y, int button){
+void ofApp::mousePressed(int x, int y, int button) {
 
 }
 
 //--------------------------------------------------------------
-void testApp::mouseReleased(int x, int y, int button){
+void ofApp::mouseReleased(int x, int y, int button) {
 
 }
 
 //--------------------------------------------------------------
-void testApp::windowResized(int w, int h){
+void ofApp::windowResized(int w, int h) {
 
 }
 
 //--------------------------------------------------------------
-void testApp::gotMessage(ofMessage msg){
+void ofApp::gotMessage(ofMessage msg) {
 
 }
 
 //--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 
 }
