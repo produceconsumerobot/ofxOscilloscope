@@ -469,6 +469,22 @@ ofxOscilloscope::~ofxOscilloscope() {
 ** REMARKS:
 ** variableNames and variableColors must be the same size.
 */
+void ofxOscilloscope::setup(float timeWindow, float sampFreq,
+	string variableName, ofColor variableColor,
+	float yScale, float yOffset) {
+
+	vector<string> variableNames;
+	variableNames.push_back(variableName);
+
+	vector<ofColor> variableColors;
+	variableColors.push_back(variableColor);
+
+	setup(timeWindow, sampFreq,
+		variableNames, variableColors,
+		yScale, yOffset);
+}
+
+
 void ofxOscilloscope::setup(float timeWindow, float sampFreq, 
 	std::vector<string> variableNames, std::vector<ofColor> variableColors, 
 	float yScale, float yOffset) {
@@ -826,6 +842,8 @@ void ofxOscilloscope::updateData(float ** data, int nPoints) {
 */
 void ofxOscilloscope::plot(){
 
+	ofPushStyle();
+
 	// Legend Background
 	ofEnableAlphaBlending();
 	ofSetColor(_backgroundColor);
@@ -842,6 +860,12 @@ void ofxOscilloscope::plot(){
 
 	// Sets the zero line width when called before plot()
 	ofSetLineWidth(_outlineWidth);
+
+	// Timescale
+	_legendFont.drawString(ofToString(_scopePlot.getTimeWindow()) + " sec," + " yScale=" + ofToString(getYScale())
+		+ ", yOffset=" + ofToString(getYOffset(), 1), 
+	_min.x + _legendWidth + _legendPadding, 
+	_max.y - _legendPadding);
 
 	// Plot the Data
 	_scopePlot.plot();
@@ -863,13 +887,9 @@ void ofxOscilloscope::plot(){
 	ofLine(_max.x,					_max.y,	_max.x,					_min.y);
 	ofLine(_max.x,					_min.y, _min.x + _legendWidth,	_min.y);
 
-	// Timescale
-	_legendFont.drawString(ofToString(_scopePlot.getTimeWindow()) + " sec," + " yScale=" + ofToString(getYScale())
-		+ ", yOffset=" + ofToString(getYOffset(), 1), 
-	_min.x + _legendWidth + _legendPadding, 
-	_max.y - _legendPadding);
-
 	ofDisableAlphaBlending(); 
+
+	ofPopStyle();
 }
 
 /*

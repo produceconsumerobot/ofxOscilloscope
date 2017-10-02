@@ -124,10 +124,13 @@ public:
 	~ofxOscilloscope();
 
 	// Setup of scope
-	void setup(float timeWindow, float sampFreq, 
-		std::vector<string> variableNames, std::vector<ofColor> variableColors, 
-		float yScale=1.0, float yOffset=0.0);
-	void setup(float timeWindow, float sampFreq, 
+	void setup(float timeWindow, float sampFreq,
+		string variableNames, ofColor variableColors,
+		float yScale = 1.0, float yOffset = 0.0);
+	void setup(float timeWindow, float sampFreq,
+		std::vector<string> variableNames, std::vector<ofColor> variableColors,
+		float yScale = 1.0, float yOffset = 0.0);
+	void setup(float timeWindow, float sampFreq,
 		string variableNames[], ofColor variableColors[], int nVariables, 
 		float yScale=1.0, float yOffset=0.0);
 
