@@ -407,7 +407,7 @@ ofxOscilloscope::ofxOscilloscope(ofRectangle scopeArea, ofTrueTypeFont legendFon
 	if(legendFont.isLoaded()) {
 		setLegendFont(legendFont);
 	} else {
-		_legendFont.loadFont("verdana.ttf", 12, true, true);
+		//_legendFont.loadFont("verdana.ttf", 12, true, true);
 			//_legendFont.setLineHeight(18.0f);
 		//_legendFont.setLetterSpacing(1.037);
 		//ofTrueTypeFont::setGlobalDpi(72);
@@ -437,7 +437,7 @@ ofxOscilloscope::ofxOscilloscope(ofPoint min, ofPoint max, ofTrueTypeFont legend
 	if(legendFont.isLoaded()) {
 		setLegendFont(legendFont);
 	} else {
-		_legendFont.loadFont("verdana.ttf", 12, true, true);
+		//_legendFont.loadFont("verdana.ttf", 12, true, true);
 			//_legendFont.setLineHeight(18.0f);
 		//_legendFont.setLetterSpacing(1.037);
 		//ofTrueTypeFont::setGlobalDpi(72);
@@ -854,16 +854,33 @@ void ofxOscilloscope::plot(){
 	ofSetColor(_outlineColor);
 
 	// Timescale
-	_legendFont.drawString(ofToString(_scopePlot.getTimeWindow()) + " sec," + " yScale=" + ofToString(getYScale())
-		+ ", yOffset=" + ofToString(getYOffset(), 1), 
-	_min.x + _legendWidth + _legendPadding, 
-	_max.y - _legendPadding);
+	string legendString = ofToString(_scopePlot.getTimeWindow()) + " sec," + " yScale=" + ofToString(getYScale())
+		+ ", yOffset=" + ofToString(getYOffset(), 1);
+	float legendX = _min.x + _legendWidth + _legendPadding;
+	float legendY = _max.y - _legendPadding;
+	if (_legendFont.isLoaded())
+	{
+		_legendFont.drawString(legendString, legendX, legendY);
+	}
+	else
+	{
+		ofDrawBitmapString(legendString, legendX, legendY);
+	}
 
 	for (int i=0; i<_scopePlot.getNumVariables(); i++) {
 		// Legend Text
 		ofSetColor(_scopePlot.getVariableColor(i));
-		_legendFont.drawString(getVariableName(i), 
-			_min.x + _legendPadding, _min.y + _legendPadding + _textSpacer*(i+1));
+		string legendString = getVariableName(i);
+		float legendX = _min.x + _legendPadding;
+		float legendY = _min.y + _legendPadding + _textSpacer*(i + 1);
+		if (_legendFont.isLoaded())
+		{
+			_legendFont.drawString(legendString, legendX, legendY);
+		}
+		else
+		{
+			ofDrawBitmapString(legendString, legendX, legendY);
+		}
 	}	
 
 	// Sets the zero line width when called before plot()
