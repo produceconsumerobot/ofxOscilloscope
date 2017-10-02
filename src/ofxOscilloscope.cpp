@@ -851,6 +851,14 @@ void ofxOscilloscope::plot(){
 	ofRect(ofRectangle(_min, legendMax));
 	ofDisableAlphaBlending(); 
 
+	ofSetColor(_outlineColor);
+
+	// Timescale
+	_legendFont.drawString(ofToString(_scopePlot.getTimeWindow()) + " sec," + " yScale=" + ofToString(getYScale())
+		+ ", yOffset=" + ofToString(getYOffset(), 1), 
+	_min.x + _legendWidth + _legendPadding, 
+	_max.y - _legendPadding);
+
 	for (int i=0; i<_scopePlot.getNumVariables(); i++) {
 		// Legend Text
 		ofSetColor(_scopePlot.getVariableColor(i));
@@ -860,12 +868,6 @@ void ofxOscilloscope::plot(){
 
 	// Sets the zero line width when called before plot()
 	ofSetLineWidth(_outlineWidth);
-
-	// Timescale
-	_legendFont.drawString(ofToString(_scopePlot.getTimeWindow()) + " sec," + " yScale=" + ofToString(getYScale())
-		+ ", yOffset=" + ofToString(getYOffset(), 1), 
-	_min.x + _legendWidth + _legendPadding, 
-	_max.y - _legendPadding);
 
 	// Plot the Data
 	_scopePlot.plot();
