@@ -788,7 +788,8 @@ float ofxOscilloscope::decrementTimeWindow() {
 /*
 ** updateData
 **
-** Data should come in the form[nVariables] with one data point/variable
+** Data should come in the form data[nVariables] with one data point/variable
+** or in form data[nDataPoints] iff scope is setup with variableNames.size() == 1
 **
 ** Loads new data onto the oscillocope buffer. Must have the same number
 ** of variables initialized with setup. plot() may be called to display the 
@@ -798,7 +799,18 @@ void ofxOscilloscope::updateData(std::vector<float> data) {
 #ifdef DEBUG_PRINT
 	printf("ofxOscilloscope::updateData\n"); 
 #endif
-	_scopePlot.updateData(data);
+	if (_variableNames.size() > 1)
+	{
+		_scopePlot.updateData(data);
+	}
+	else
+	{
+		// Reshape data to easily handle case where we're plotting a single data stream
+		vector<vector<float>> temp;
+		temp.resize(1);
+		temp.at(0) = data;
+		_scopePlot.updateData(temp);
+	}
 }
 
 /*
@@ -869,17 +881,20 @@ void ofxOscilloscope::plot(){
 
 	for (int i=0; i<_scopePlot.getNumVariables(); i++) {
 		// Legend Text
-		ofSetColor(_scopePlot.getVariableColor(i));
-		string legendString = getVariableName(i);
-		float legendX = _min.x + _legendPadding;
-		float legendY = _min.y + _legendPadding + _textSpacer*(i + 1);
-		if (_legendFont.isLoaded())
+		if (_legendWidth >= 0)
 		{
-			_legendFont.drawString(legendString, legendX, legendY);
-		}
-		else
-		{
-			ofDrawBitmapString(legendString, legendX, legendY);
+			ofSetColor(_scopePlot.getVariableColor(i));
+			string legendString = getVariableName(i);
+			float legendX = _min.x + _legendPadding;
+			float legendY = _min.y + _legendPadding + _textSpacer*(i + 1);
+			if (_legendFont.isLoaded())
+			{
+				_legendFont.drawString(legendString, legendX, legendY);
+			}
+			else
+			{
+				ofDrawBitmapString(legendString, legendX, legendY);
+			}
 		}
 	}	
 
@@ -895,10 +910,13 @@ void ofxOscilloscope::plot(){
 	ofEnableAlphaBlending();
 
 	// Legend outline
-	ofLine(_min.x,					_min.y,	_min.x,					_max.y);
-	ofLine(_min.x,					_max.y,	_min.x + _legendWidth,	_max.y);
-	ofLine(_min.x + _legendWidth,	_max.y,	_min.x + _legendWidth,	_min.y);
-	ofLine(_min.x + _legendWidth,	_min.y,	_min.x,					_min.y);
+	if (_legendWidth >= 0)
+	{
+		ofLine(_min.x, _min.y, _min.x, _max.y);
+		ofLine(_min.x, _max.y, _min.x + _legendWidth, _max.y);
+		ofLine(_min.x + _legendWidth, _max.y, _min.x + _legendWidth, _min.y);
+		ofLine(_min.x + _legendWidth, _min.y, _min.x, _min.y);
+	}
 
 	// Scope outline
 	//ofLine(_min.x, _min.y, _min.x, _max.y);
