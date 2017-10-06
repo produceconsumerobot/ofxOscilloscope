@@ -135,7 +135,7 @@ public:
 		float yScale=1.0, float yOffset=0.0);
 
 	// Updating data
-	void updateData(std::vector<float> data); // data[_nVariables]
+	void updateData(std::vector<float> data); // data[_nVariables] or data[nPoints] iff _nVariables==1
 	void updateData(std::vector<std::vector<float> > data); // data[_nVariables][nPoints]
 	void updateData(float ** data, int nPoints); // ** DEPRECATED ** data[_nVariables][nPoints] 
 
