@@ -907,13 +907,28 @@ void ofxOscilloscope::plot(){
 		+ ", yOffset=" + ofToString(getYOffset(), 1);
 	float legendX = _min.x + _legendWidth + _legendPadding;
 	float legendY = _max.y - _legendPadding;
-	float yValX = _min.x + _legendWidth - _legendPadding * 2;
+	float yLabelPadding = 3;
+	float yValX = _min.x + _legendWidth - yLabelPadding;
 	float yValY = (_min.y + _max.y) / 2;
 
 	if (_legendFont.isLoaded())
 	{
 		_legendFont.drawString(legendString, legendX, legendY);
-		_legendFont.drawString(ofToString(getYOffset() / getYScale()), yValX, yValY + _legendFont.getAscenderHeight() / 2);
+
+		string yVal;
+		ofRectangle yValBox;
+
+		yVal = ofToString(-getYOffset() / getYScale());
+		yValBox = _legendFont.getStringBoundingBox(yVal, 0, 0);
+		_legendFont.drawString(yVal, yValX - yValBox.getRight(), yValY + _legendFont.getAscenderHeight() / 2);
+
+		yVal = ofToString((-getYOffset() + ofGetWindowHeight() / 2) / getYScale());
+		yValBox = _legendFont.getStringBoundingBox(yVal, 0, 0);
+		_legendFont.drawString(yVal, yValX - yValBox.getRight(), _min.y - yValBox.getTop() + yLabelPadding);
+
+		yVal = ofToString((-getYOffset() - ofGetWindowHeight() / 2) / getYScale());
+		yValBox = _legendFont.getStringBoundingBox(yVal, 0, 0);
+ 		_legendFont.drawString(yVal, yValX - yValBox.getRight(), _max.y - yLabelPadding);
 	}
 	else
 	{
