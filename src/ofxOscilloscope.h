@@ -81,6 +81,7 @@ public:
 	float getYScale();
 	void setYOffset(float yOffset);
 	float getYOffset();
+	pair<float, float> getMinMaxY();
 
 	int getNumVariables();
 	ofColor getVariableColor(int i);
@@ -107,6 +108,7 @@ private:
 	ofColor _outlineColor;
 	float _outlineWidth;
 	ofColor _backgroundColor;
+	bool _autoscaleY;
 
 public:
 	// Constructors
@@ -170,6 +172,7 @@ public:
 	float getYScale();				// yScale of plotted data
 	void setYOffset(float yOffset);	// yScale of plotted data
 	float getYOffset();				// yScale of plotted data
+	void autoscaleY(bool autoscale);
 
 	float incrementYScale();		// Change yScale of plotted data
 	float decrementYScale();		// Change yScale of plotted data

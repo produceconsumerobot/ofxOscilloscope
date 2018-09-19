@@ -28,6 +28,7 @@ void ofApp::setup() {
 		// Setup the oscilloscopes
 		scopeWin.scopes.at(i).setup(timeWindow, (i + 1)*samplingFreqMult, vec_names, vec_colors,
 			yScale, yOffset); // Setup each oscilloscope panel
+		scopeWin.scopes.at(i).autoscaleY(autoscaleY);
 	}
 
 	// Allocate space for new data in form data[nVariables][nPoints]
@@ -44,13 +45,7 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
-
-}
-
-//--------------------------------------------------------------
-void ofApp::draw() {
-	//printf("draw()\n");
-
+	// Generate dummy data
 	if (zeroData) {
 		data.at(0).assign(data.at(0).size(), 0.);
 	}
@@ -74,6 +69,8 @@ void ofApp::draw() {
 	}
 	}
 	*/
+
+	// Add data to the scopes
 	if (!isPaused) {
 		for (int i = 0; i<nScopes; i++) {
 			scopeWin.scopes.at(i).updateData(data);
@@ -89,8 +86,12 @@ void ofApp::draw() {
 	}
 	delete[] array_data;
 	*/
+}
 
-	zeroData = false;
+//--------------------------------------------------------------
+void ofApp::draw() {
+	//printf("draw()\n");
+
 	scopeWin.plot();
 	ofSleepMillis(100);
 }
@@ -330,6 +331,12 @@ void ofApp::keyReleased(int key) {
 	}
 	if (key == 'r') {
 		scopeWin.scopes.at(1).setTextSpacing(20, 10);
+	}
+	if (key == ':') {
+		autoscaleY = !autoscaleY;
+		for (int i = 0; i<nScopes; i++) {
+			scopeWin.scopes.at(i).autoscaleY(autoscaleY);
+		}
 	}
 }
 

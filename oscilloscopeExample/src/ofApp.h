@@ -33,4 +33,5 @@ public:
 	int selectedScope;
 
 	bool isPaused;
+	bool autoscaleY = false;
 };

@@ -298,6 +298,22 @@ float ofxScopePlot::getYOffset() {
 	return _yOffset;
 }
 
+/*
+** getMinMaxY
+** Returns the min and max values of the data in the oscilloscope window as an std::pair
+*/
+pair<float, float> ofxScopePlot::getMinMaxY() {
+	vector<float> minMaxY;
+	for (int j = 0; j < _buffer.size(); j++) {
+		// calculate the min and max for each plot in the scope 
+		auto result = std::minmax_element(_buffer.at(j).begin(), _buffer.at(j).end());
+		minMaxY.push_back(*result.first);
+		minMaxY.push_back(*result.second);
+	}
+	// return the min and max across all scope plots
+	auto result = std::minmax_element(minMaxY.begin(), minMaxY.end());
+	return std::pair<float, float>(*(result.first), *(result.second));
+}
 
 /*
 ** plot
@@ -416,6 +432,7 @@ ofxOscilloscope::ofxOscilloscope(ofRectangle scopeArea, ofTrueTypeFont legendFon
 	// Default values
 	_legendPadding = 10;
 	_textSpacer = 20;
+	_autoscaleY = false;
 }
 
 ofxOscilloscope::ofxOscilloscope(ofPoint min, ofPoint max, ofTrueTypeFont legendFont,
@@ -446,6 +463,7 @@ ofxOscilloscope::ofxOscilloscope(ofPoint min, ofPoint max, ofTrueTypeFont legend
 	// Default values
 	_legendPadding = 10;
 	_textSpacer = 20;
+	_autoscaleY = false;
 }
 
 /*
@@ -712,6 +730,14 @@ float ofxOscilloscope::getYOffset() {
 }
 
 /*
+** autoscaleY
+** sets the autoscaling of the oscilloscope Y-axis
+*/
+void ofxOscilloscope::autoscaleY(bool autoscale) {
+	_autoscaleY = autoscale;
+}
+
+/*
 ** incrementYScale
 ** Increases the yScale to yScale*2
 */ 
@@ -865,18 +891,34 @@ void ofxOscilloscope::plot(){
 
 	ofSetColor(_outlineColor);
 
+	if (_autoscaleY) {
+		auto minMaxY = _scopePlot.getMinMaxY();
+		// Using ofGetWindowHeight() here is messy
+		// ToDo: Consider refactoring code to make use ofScale() and ofTranslate() instead multiplication and subtraction
+		float yScale = ofGetWindowHeight() / (minMaxY.second - minMaxY.first);
+		float yOffset = - (minMaxY.second + minMaxY.first) / 2 * yScale;
+		//float yOffset = 0;
+		_scopePlot.setYOffset(yOffset);
+		_scopePlot.setYScale(yScale);
+	}
+
 	// Timescale
 	string legendString = ofToString(_scopePlot.getTimeWindow()) + " sec," + " yScale=" + ofToString(getYScale())
 		+ ", yOffset=" + ofToString(getYOffset(), 1);
 	float legendX = _min.x + _legendWidth + _legendPadding;
 	float legendY = _max.y - _legendPadding;
+	float yValX = _min.x + _legendWidth - _legendPadding * 2;
+	float yValY = (_min.y + _max.y) / 2;
+
 	if (_legendFont.isLoaded())
 	{
 		_legendFont.drawString(legendString, legendX, legendY);
+		_legendFont.drawString(ofToString(getYOffset() / getYScale()), yValX, yValY + _legendFont.getAscenderHeight() / 2);
 	}
 	else
 	{
 		ofDrawBitmapString(legendString, legendX, legendY);
+		ofDrawBitmapString(ofToString(getYOffset() / getYScale()), yValX, yValY);
 	}
 
 	for (int i=0; i<_scopePlot.getNumVariables(); i++) {
