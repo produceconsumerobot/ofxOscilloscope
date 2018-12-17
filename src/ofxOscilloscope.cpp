@@ -316,10 +316,24 @@ pair<float, float> ofxScopePlot::getMinMaxY() {
 }
 
 /*
+** setMinMaxY
+** Returns the min and max values of the data in the oscilloscope window as an std::pair
+*/
+void ofxScopePlot::setMinMaxY(pair<float, float> yLims) {
+	float plotHeight = ofGetWindowSize().y;
+	float ySpan = yLims.second - yLims.first;
+	setYScale(plotHeight / ySpan);
+	float yOffset = (yLims.second + yLims.first) / 2.f;
+	setYOffset(-yOffset * plotHeight / ySpan);
+}
+
+/*
 ** plot
 ** Plots the data in the buffer
 */
 void ofxScopePlot::plot() {
+	// ToDo:: simplify code to use ofPushMatrix()
+
 	//float xPlotScale = ofGetWindowSize().x / _pointsPerWin * ofGetWindowSize().x / (_max.x - _min.x);
 	float xPlotScale = (_max.x - _min.x) / (_pointsPerWin - 1);// * (_max.x - _min.x) / ofGetWindowSize().x;
 	float yPlotScale = (_max.y - _min.y) / ofGetWindowSize().y;
@@ -503,18 +517,28 @@ void ofxOscilloscope::setup(float timeWindow, float sampFreq,
 }
 
 
-void ofxOscilloscope::setup(float timeWindow, float sampFreq, 
-	std::vector<string> variableNames, std::vector<ofColor> variableColors, 
+void ofxOscilloscope::setup(float timeWindow, float sampFreq,
+	std::vector<string> variableNames, std::vector<ofColor> variableColors,
 	float yScale, float yOffset) {
 
-		if (variableNames.size() != variableColors.size()) {
-			fprintf(stderr, "ERROR: variableNames.size() != variableColors.size()");
-		} else {
-			ofPoint min = _min;
-			min.x = min.x + _legendWidth;
-			_scopePlot.setup(timeWindow, sampFreq, variableColors, yScale, yOffset);
-			setVariableNames(variableNames);
+	//if (variableNames.size() > variableColors.size()) {
+	//	fprintf(stderr, "ERROR: variableNames.size() > variableColors.size()");
+	if (variableNames.size() > variableColors.size()) {
+		for (int i = variableNames.size(); i < variableColors.size(); i++) {
+			variableColors.emplace_back(0, 0, 0);
 		}
+	}
+	if (variableNames.size() < variableColors.size()) {
+		vector<ofColor> temp = vector<ofColor>(variableColors.begin(), variableColors.begin() + variableNames.size());
+		variableColors = temp;
+	}
+
+	//} else {
+	ofPoint min = _min;
+	min.x = min.x + _legendWidth;
+
+	_scopePlot.setup(timeWindow, sampFreq, variableColors, yScale, yOffset);
+	setVariableNames(variableNames);
 }
 
 /*
@@ -735,6 +759,10 @@ float ofxOscilloscope::getYOffset() {
 */
 void ofxOscilloscope::autoscaleY(bool autoscale) {
 	_autoscaleY = autoscale;
+}
+
+void ofxOscilloscope::setYLims(pair<float, float> yLims) {
+	_scopePlot.setMinMaxY(yLims);
 }
 
 /*
