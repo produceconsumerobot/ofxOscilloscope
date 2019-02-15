@@ -183,6 +183,16 @@ void ofxScopePlot::updateData(float ** data, int nPoints) {
 	updateData(vec_data);
 }
 
+void ofxScopePlot::clearData() {
+	for (int i = 0; i < _buffer.size(); i++) {
+		if (_buffer.at(i).size() > 0) {
+			float lastVal = _buffer.at(i).at(0);
+			_buffer.at(i).assign(_buffer.at(i).size(), lastVal);
+		}
+	}
+}
+
+
 /*
 ** setVariableColors
 ** Sets the plot colors of the variables.
@@ -901,6 +911,9 @@ void ofxOscilloscope::updateData(float ** data, int nPoints) {
 	_scopePlot.updateData(data, nPoints);
 }
 
+void ofxOscilloscope::clearData() {
+	_scopePlot.clearData();
+}
 
 /*
 ** plot
@@ -1282,5 +1295,11 @@ vector<float> ofxMultiScope::decrementTimeWindow() {
 void ofxMultiScope::plot() {
 	for (int i=0; i<scopes.size(); i++) {
 		scopes.at(i).plot();
+	}
+}
+
+void ofxMultiScope::clearData() {
+	for (int i = 0; i<scopes.size(); i++) {
+		scopes.at(i).clearData();
 	}
 }

@@ -58,6 +58,7 @@ public:
 	void updateData(std::vector<float> data); // data[_nVariables]
 	void updateData(std::vector<std::vector<float> > data); // data[_nVariables][nPoints]
 	void updateData(float ** data, int nPoints); // ** DEPRECATED ** data[_nVariables][nPoints]
+	void clearData();	// Sets all data to the most recent value;
 
 	// Plotting
 	void plot();
@@ -141,6 +142,7 @@ public:
 	void updateData(std::vector<float> data); // data[_nVariables] or data[nPoints] iff _nVariables==1
 	void updateData(std::vector<std::vector<float> > data); // data[_nVariables][nPoints]
 	void updateData(float ** data, int nPoints); // ** DEPRECATED ** data[_nVariables][nPoints] 
+	void clearData();	// Sets all data to the most recent value;
 
 	// Plotting
 	void plot();
@@ -186,6 +188,7 @@ public:
 
 	string getVariableName(int i);	// Name of a selected variable
 
+
 	static float round(float number) {	// General purpose function that should be built in
 		return number < 0.0 ? ceil(number - 0.5) : floor(number + 0.5);
 	}
@@ -221,6 +224,7 @@ public:
 
 	// Plotting
 	void plot();
+	void clearData();
 
 	// Setters/Getters
 	void setTimeWindow(float timeWindow);		// Duration of displayed data window (seconds)
