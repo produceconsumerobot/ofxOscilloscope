@@ -103,6 +103,7 @@ private:
 	ofPoint _max;
 	int _legendWidth;
 	ofTrueTypeFont _legendFont;
+	ofTrueTypeFont _axesFont;
 	int _legendPadding;
 	int _textSpacer;
 	ofxScopePlot _scopePlot;
@@ -168,6 +169,7 @@ public:
 	void setBackgroundColor(ofColor backgroundColor);	// Background color of scopes
 
 	void setLegendFont(ofTrueTypeFont legendFont);				// Legend font
+	void setAxesFont(ofTrueTypeFont axesFont);					// Axes font
 	void setLegendWidth(int legendWidth);						// Width of legend
 	void setTextSpacing(int legendPadding, int textSpacing);	// Vertical spacing of legend text
 
@@ -239,6 +241,7 @@ public:
 	void setBackgroundColor(ofColor backgroundColor);	// Background color of scopes
 
 	void setLegendFont(ofTrueTypeFont legendFont);				// Legend font
+	void setAxesFont(ofTrueTypeFont axesFont);					// Axes font
 	void setLegendWidth(int legendWidth);						// Width of legend
 	void setTextSpacing(int legendPadding, int textSpacing);	// Vertical spacing of legend text
 

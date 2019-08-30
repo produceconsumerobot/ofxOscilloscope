@@ -446,6 +446,7 @@ ofxOscilloscope::ofxOscilloscope(ofRectangle scopeArea, ofTrueTypeFont legendFon
 
 	if(legendFont.isLoaded()) {
 		setLegendFont(legendFont);
+		setAxesFont(legendFont);
 	} else {
 		//_legendFont.loadFont("verdana.ttf", 12, true, true);
 			//_legendFont.setLineHeight(18.0f);
@@ -477,6 +478,7 @@ ofxOscilloscope::ofxOscilloscope(ofPoint min, ofPoint max, ofTrueTypeFont legend
 
 	if(legendFont.isLoaded()) {
 		setLegendFont(legendFont);
+		setAxesFont(legendFont);
 	} else {
 		//_legendFont.loadFont("verdana.ttf", 12, true, true);
 			//_legendFont.setLineHeight(18.0f);
@@ -668,6 +670,14 @@ void ofxOscilloscope::setBackgroundColor(ofColor backgroundColor) {
 */ 
 void ofxOscilloscope::setLegendFont(ofTrueTypeFont legendFont) {
 	_legendFont = legendFont;
+}
+
+/*
+** setAxesFont
+** Sets the font used for the axes text
+*/
+void ofxOscilloscope::setAxesFont(ofTrueTypeFont axesFont) {
+	_axesFont = axesFont;
 }
 
 /*
@@ -944,7 +954,7 @@ void ofxOscilloscope::plot(){
 	}
 
 	// Timescale
-	string legendString = ofToString(_scopePlot.getTimeWindow()) + " sec," + " yScale=" + ofToString(getYScale())
+	string axesString = ofToString(_scopePlot.getTimeWindow()) + " sec," + " yScale=" + ofToString(getYScale())
 		+ ", yOffset=" + ofToString(getYOffset(), 1);
 	float legendX = _min.x + _legendWidth + _legendPadding;
 	float legendY = _max.y - _legendPadding;
@@ -952,30 +962,40 @@ void ofxOscilloscope::plot(){
 	float yValX = _min.x + _legendWidth - yLabelPadding;
 	float yValY = (_min.y + _max.y) / 2;
 
-	if (_legendFont.isLoaded())
+	if (_axesFont.isLoaded())
 	{
-		_legendFont.drawString(legendString, legendX, legendY);
-
-		string yVal;
-		ofRectangle yValBox;
-
-		yVal = ofToString(-getYOffset() / getYScale());
-		yValBox = _legendFont.getStringBoundingBox(yVal, 0, 0);
-		_legendFont.drawString(yVal, yValX - yValBox.getRight(), yValY + _legendFont.getAscenderHeight() / 2);
-
-		yVal = ofToString((-getYOffset() + ofGetWindowHeight() / 2) / getYScale());
-		yValBox = _legendFont.getStringBoundingBox(yVal, 0, 0);
-		_legendFont.drawString(yVal, yValX - yValBox.getRight(), _min.y - yValBox.getTop() + yLabelPadding);
-
-		yVal = ofToString((-getYOffset() - ofGetWindowHeight() / 2) / getYScale());
-		yValBox = _legendFont.getStringBoundingBox(yVal, 0, 0);
- 		_legendFont.drawString(yVal, yValX - yValBox.getRight(), _max.y - yLabelPadding);
+		_axesFont.drawString(axesString, legendX, legendY);
 	}
 	else
 	{
-		ofDrawBitmapString(legendString, legendX, legendY);
-		ofDrawBitmapString(ofToString(getYOffset() / getYScale()), yValX, yValY);
+		ofDrawBitmapString(axesString, legendX, legendY);
 	}
+
+	
+	string yVal;
+	ofRectangle yValBox;
+
+	if (_axesFont.isLoaded()) {
+
+		yVal = ofToString(-getYOffset() / getYScale());
+		yValBox = _axesFont.getStringBoundingBox(yVal, 0, 0);
+		_axesFont.drawString(yVal, yValX - yValBox.getRight(), yValY + _axesFont.getAscenderHeight() / 2);
+
+		yVal = ofToString((-getYOffset() + ofGetWindowHeight() / 2) / getYScale());
+		yValBox = _axesFont.getStringBoundingBox(yVal, 0, 0);
+		_axesFont.drawString(yVal, yValX - yValBox.getRight(), _min.y - yValBox.getTop() + yLabelPadding);
+
+		yVal = ofToString((-getYOffset() - ofGetWindowHeight() / 2) / getYScale());
+		yValBox = _axesFont.getStringBoundingBox(yVal, 0, 0);
+		_axesFont.drawString(yVal, yValX - yValBox.getRight(), _max.y - yLabelPadding);
+
+	}
+	else
+	{
+		// ToDo: write ofDrawBitmapString alternative
+	}
+
+
 
 	for (int i=0; i<_scopePlot.getNumVariables(); i++) {
 		// Legend Text
@@ -1159,6 +1179,17 @@ void ofxMultiScope::setLegendFont(ofTrueTypeFont legendFont) {
 		scopes.at(i).setLegendFont(legendFont);
 	}
 }
+
+/*
+** setAxesFont
+** Sets the font used for the legend text
+*/
+void ofxMultiScope::setAxesFont(ofTrueTypeFont font) {
+	for (int i = 0; i < _numScopes; i++) {
+		scopes.at(i).setAxesFont(font);
+	}
+}
+
 
 /*
 ** setLegendWidth
