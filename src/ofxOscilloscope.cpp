@@ -458,6 +458,7 @@ ofxOscilloscope::ofxOscilloscope(ofRectangle scopeArea, ofTrueTypeFont legendFon
 	_legendPadding = 10;
 	_textSpacer = 20;
 	_autoscaleY = false;
+	_minYSpan = 0.f;
 }
 
 ofxOscilloscope::ofxOscilloscope(ofPoint min, ofPoint max, ofTrueTypeFont legendFont,
@@ -490,6 +491,7 @@ ofxOscilloscope::ofxOscilloscope(ofPoint min, ofPoint max, ofTrueTypeFont legend
 	_legendPadding = 10;
 	_textSpacer = 20;
 	_autoscaleY = false;
+	_minYSpan = 0.f;
 }
 
 /*
@@ -777,8 +779,9 @@ float ofxOscilloscope::getYOffset() {
 ** autoscaleY
 ** sets the autoscaling of the oscilloscope Y-axis
 */
-void ofxOscilloscope::autoscaleY(bool autoscale) {
+void ofxOscilloscope::autoscaleY(bool autoscale, float minYSpan) {
 	_autoscaleY = autoscale;
+	_minYSpan = minYSpan;
 }
 
 void ofxOscilloscope::setYLims(pair<float, float> yLims) {
@@ -944,10 +947,19 @@ void ofxOscilloscope::plot(){
 
 	if (_autoscaleY) {
 		auto minMaxY = _scopePlot.getMinMaxY();
+		float ySpan = minMaxY.second - minMaxY.first;
+		float meanXY = (minMaxY.first + minMaxY.second) / 2;
+		if (_minYSpan > ySpan) {
+			minMaxY.second = meanXY + _minYSpan / 2;
+			minMaxY.first = meanXY - _minYSpan / 2;
+		}
+		ySpan = minMaxY.second - minMaxY.first;
+		meanXY = (minMaxY.first + minMaxY.second) / 2;
+
 		// Using ofGetWindowHeight() here is messy
 		// ToDo: Consider refactoring code to make use ofScale() and ofTranslate() instead multiplication and subtraction
-		float yScale = ofGetWindowHeight() / (minMaxY.second - minMaxY.first);
-		float yOffset = - (minMaxY.second + minMaxY.first) / 2 * yScale;
+		float yScale = ofGetWindowHeight() / (ySpan);
+		float yOffset = - meanXY * yScale;
 		//float yOffset = 0;
 		_scopePlot.setYOffset(yOffset);
 		_scopePlot.setYScale(yScale);

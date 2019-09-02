@@ -112,6 +112,7 @@ private:
 	float _outlineWidth;
 	ofColor _backgroundColor;
 	bool _autoscaleY;
+	float _minYSpan;
 
 public:
 	// Constructors
@@ -177,7 +178,7 @@ public:
 	float getYScale();				// yScale of plotted data
 	void setYOffset(float yOffset);	// yScale of plotted data
 	float getYOffset();				// yScale of plotted data
-	void autoscaleY(bool autoscale);
+	void autoscaleY(bool autoscale, float minYSpan = 0.f);
 	void setYLims(pair<float,float> yLims);
 	//pair<float, float> getYLims();
 
