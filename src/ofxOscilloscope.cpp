@@ -986,6 +986,7 @@ void ofxOscilloscope::plot(){
 	
 	string yVal;
 	ofRectangle yValBox;
+	ofBitmapFont bitmapFont; 
 
 	if (_axesFont.isLoaded()) {
 
@@ -1004,7 +1005,17 @@ void ofxOscilloscope::plot(){
 	}
 	else
 	{
-		// ToDo: write ofDrawBitmapString alternative
+		yVal = ofToString(-getYOffset() / getYScale());
+        yValBox = bitmapFont.getBoundingBox(yVal,0,0);
+        ofDrawBitmapString(yVal, yValX - yValBox.getRight(), yValY + yValBox.getHeight() / 2);
+        
+        yVal = ofToString((-getYOffset() + ofGetWindowHeight() / 2) / getYScale());
+        yValBox = bitmapFont.getBoundingBox(yVal,0,0);
+        ofDrawBitmapString(yVal, yValX - yValBox.getRight(), _min.y - yValBox.getTop() + yLabelPadding);
+        
+        yVal = ofToString((-getYOffset() - ofGetWindowHeight() / 2) / getYScale());
+        yValBox = bitmapFont.getBoundingBox(yVal,0,0);
+        ofDrawBitmapString(yVal,  yValX - yValBox.getRight(), _max.y - yLabelPadding);
 	}
 
 
