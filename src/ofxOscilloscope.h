@@ -214,7 +214,7 @@ public:
 
 	// Constructors
 	ofxMultiScope();
-	ofxMultiScope(int numScopes, ofRectangle plotArea=ofRectangle(ofPoint(0,0), ofGetWindowSize()), 
+	ofxMultiScope(int numScopes, ofRectangle plotArea=ofRectangle(glm::vec2(0,0), ofGetWindowSize()), 
 		ofTrueTypeFont legendFont=ofTrueTypeFont(), int legendWidth=100,
 		ofColor outlineColor=ofColor(200,200,200), ofColor zeroLineColor=ofColor(140,140,140),
 		ofColor backgroundColor=ofColor(0.,0.,0.,0.));
