@@ -17,6 +17,8 @@
 #include <vector>
 #include <algorithm>
 
+#define OFX_OSCILLOSCOPE_VERSION_MAJOR 0
+#define OFX_OSCILLOSCOPE_VERSION_MINOR 11 // something about versioning
 
 /*-------------------------------------------------
 * ofxScopePlot
@@ -214,10 +216,18 @@ public:
 
 	// Constructors
 	ofxMultiScope();
-	ofxMultiScope(int numScopes, ofRectangle plotArea=ofRectangle(glm::vec2(0,0), ofGetWindowSize()), 
-		ofTrueTypeFont legendFont=ofTrueTypeFont(), int legendWidth=100,
-		ofColor outlineColor=ofColor(200,200,200), ofColor zeroLineColor=ofColor(140,140,140),
-		ofColor backgroundColor=ofColor(0.,0.,0.,0.));
+	#if (OF_VERSION_MINOR == OFX_OSCILLOSCOPE_VERSION_MINOR) 
+		ofxMultiScope(int numScopes, ofRectangle plotArea = ofRectangle(glm::vec2(0, 0), ofGetWindowSize()),
+			ofTrueTypeFont legendFont = ofTrueTypeFont(), int legendWidth = 100,
+			ofColor outlineColor = ofColor(200, 200, 200), ofColor zeroLineColor = ofColor(140, 140, 140),
+			ofColor backgroundColor = ofColor(0., 0., 0., 0.));
+	#else 
+	// for OFX0.9.8, ofRectangle has cinstructor ofPoint
+		ofxMultiScope(int numScopes, ofRectangle plotArea = ofRectangle(ofPoint(0, 0), ofGetWindowSize()),
+			ofTrueTypeFont legendFont = ofTrueTypeFont(), int legendWidth = 100,
+			ofColor outlineColor = ofColor(200, 200, 200), ofColor zeroLineColor = ofColor(140, 140, 140),
+			ofColor backgroundColor = ofColor(0., 0., 0., 0.));
+	#endif
 	ofxMultiScope(int numScopes, ofPoint min=ofPoint(0,0), ofPoint max=ofGetWindowSize(), 
 		ofTrueTypeFont legendFont=ofTrueTypeFont(), int legendWidth=100,
 		ofColor outlineColor=ofColor(200,200,200), ofColor zeroLineColor=ofColor(140,140,140),
