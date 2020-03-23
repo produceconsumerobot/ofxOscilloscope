@@ -17,8 +17,9 @@
 #include <vector>
 #include <algorithm>
 
-#define OFX_OSCILLOSCOPE_VERSION_MAJOR 0
-#define OFX_OSCILLOSCOPE_VERSION_MINOR 11 // something about versioning
+#define OFX_SUPPORT_VERSION_MAJOR_0 0
+#define OFX_SUPPORT_VERSION_MINOR_9 9
+#define OFX_SUPPORT_VERSION_MINOR_10 10
 
 /*-------------------------------------------------
 * ofxScopePlot
@@ -216,12 +217,12 @@ public:
 
 	// Constructors
 	ofxMultiScope();
-	#if (OF_VERSION_MINOR == OFX_OSCILLOSCOPE_VERSION_MINOR) 
+	#if (OF_VERSION_MAJOR > OFX_SUPPORT_VERSION_MAJOR_0 || OF_VERSION_MINOR >= OFX_SUPPORT_VERSION_MINOR_10)
 		ofxMultiScope(int numScopes, ofRectangle plotArea = ofRectangle(glm::vec2(0, 0), ofGetWindowSize()),
 			ofTrueTypeFont legendFont = ofTrueTypeFont(), int legendWidth = 100,
 			ofColor outlineColor = ofColor(200, 200, 200), ofColor zeroLineColor = ofColor(140, 140, 140),
 			ofColor backgroundColor = ofColor(0., 0., 0., 0.));
-	#else 
+	#elif (OF_VERSION_MINOR <= OFX_SUPPORT_VERSION_MINOR_9)
 	// for OFX0.9.8, ofRectangle has cinstructor ofPoint
 		ofxMultiScope(int numScopes, ofRectangle plotArea = ofRectangle(ofPoint(0, 0), ofGetWindowSize()),
 			ofTrueTypeFont legendFont = ofTrueTypeFont(), int legendWidth = 100,
