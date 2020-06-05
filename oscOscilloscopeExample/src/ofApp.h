@@ -2,7 +2,6 @@
 
 #include "ofMain.h"
 #include "ofxOscilloscope.h"
-#include "ofxXmlSettings.h"
 
 class ofApp : public ofBaseApp {
 public:
@@ -20,9 +19,9 @@ public:
 	void windowResized(int w, int h);
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
-	bool saveScopeSettings(vector<ofxMultiScope> &multiScopes, string filename = "scope_settings.xml");
+	bool saveScopeSettings(vector<ofxMultiScope> &multiScopes, string filename = "scopeSettings.xml");
 	//bool loadScopeSettings(vector<ofxMultiScope> &multiScopes, string filename = "scope_settings.xml");
-	vector<ofxMultiScope> loadScopeSettings(string filename = "scope_settings.xml");
+	vector<ofxMultiScope> loadScopeSettings(string filename = "scopeSettings.xml");
 
 	ofxMultiScope scopeWin;
 	int newPoints;

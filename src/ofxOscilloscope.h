@@ -14,6 +14,7 @@
 #define _OFX_OSCILLOSCOPE
 
 #include "ofMain.h"
+#include "ofxXmlSettings.h"
 #include <vector>
 #include <algorithm>
 
@@ -221,7 +222,11 @@ private:
 	ofPoint _max;
 	int _numScopes;
 public:
+
 	std::vector<ofxOscilloscope> scopes;
+
+	static vector<ofxMultiScope> loadScopeSettings(string filename = "ofxOscilloscopeSettings.xml");
+	static bool saveScopeSettings(vector<ofxMultiScope> &multiScopes, string filename = "ofxOscilloscopeSettings.xml");
 
 	// Constructors
 	ofxMultiScope();

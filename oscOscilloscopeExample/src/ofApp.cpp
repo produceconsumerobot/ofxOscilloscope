@@ -3,44 +3,19 @@
 //--------------------------------------------------------------
 void ofApp::setup() {
 	ofBackground(255, 255, 255);
-	ofTrueTypeFont legendFont;
-	legendFont.load("verdana.ttf", 12, true, true);
+	
+	
+	vector<ofxMultiScope> scopeWins = ofxMultiScope::loadScopeSettings();
+	if (scopeWins.size() == 0) {
+		cout << "ABORTING: No ofxOscilloscope settings found..." << endl;
+		while(true);
+	}
 
-
-
-
-
-	newPoints = 23;
-	const int nVariables = 2;
-
-	//ofColor colors[nVariables] = { ofColor(0,0,0), ofColor(255,0,0) };
-	//std::vector<ofColor> vec_colors(colors, colors + nVariables);
-
-	//string names[2] = { "happy", "joy" };
-	//std::vector<string> vec_names(names, names + nVariables);
-
-	//nScopes = 5;
-	//float timeWindow = 5.; // seconds
-	//float samplingFreqMult = 100;
-	//float yScale = 1.; // yScale multiplier
-	//float yOffset = 0.; // yOffset from the center of the scope window
-
-	//ofRectangle scopeArea = ofRectangle(ofPoint(0, 0), ofPoint(ofGetWindowSize()));
-
-	//scopeWin = ofxMultiScope(nScopes, scopeArea, legendFont); // Setup the multiScope panel
-
-	//for (int i = 0; i<nScopes; i++) {
-	//	 Setup the oscilloscopes
-	//	scopeWin.scopes.at(i).setup(timeWindow, (i + 1)*samplingFreqMult, vec_names, vec_colors,
-	//		yScale, yOffset); // Setup each oscilloscope panel
-	//	scopeWin.scopes.at(i).autoscaleY(autoscaleY);
-	//}
-
-	vector<ofxMultiScope> scopeWins = loadScopeSettings();
 	scopeWin = scopeWins.at(0);
-	//int nVariables = 10; // Todo: determine this number from scopeWin
 
 	// Allocate space for new data in form data[nVariables][nPoints]
+	const int nVariables = 2;
+	newPoints = 23;
 	data.resize(nVariables, vector<float>(newPoints, 0));
 
 	zeroData = false;
@@ -350,12 +325,11 @@ void ofApp::keyReleased(int key) {
 	if (key == 'S') {
 		vector<ofxMultiScope> scopeWins;
 		scopeWins.push_back(scopeWin);
-		saveScopeSettings(scopeWins);
+		ofxMultiScope::saveScopeSettings(scopeWins);
 	}
 	if (key == 'L') {
-		vector<ofxMultiScope> scopeWins = loadScopeSettings();
+		vector<ofxMultiScope> scopeWins = ofxMultiScope::loadScopeSettings();
 		scopeWin = scopeWins.at(0);
-		bool test = true;
 	}
 }
 
@@ -393,158 +367,4 @@ void ofApp::gotMessage(ofMessage msg) {
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo) {
 
-}
-
-bool ofApp::saveScopeSettings(vector<ofxMultiScope> &multiScopes, string filename)
-{
-	int multiScope = 0;
-	int scope = 0;
-	int plot = 0;
-	int plotId = 0;
-
-	// ToDo: Read settings from multiScopes
-
-	ofxXmlSettings scopeSettings;
-	scopeSettings.clear();
-
-	int nMultiScopes = multiScopes.size();
-	for (int m = 0; m < nMultiScopes; m++)
-	{
-		//scopeSettings.addTag("multiScopes");
-		//scopeSettings.pushTag("multiScopes");
-		scopeSettings.addTag("multiScope");
-		scopeSettings.pushTag("multiScope", m);
-		scopeSettings.addValue("x", multiScopes.at(m).getPosition().getX());
-		scopeSettings.addValue("y", multiScopes.at(m).getPosition().getY());
-		scopeSettings.addValue("width", multiScopes.at(m).getPosition().getWidth());
-		scopeSettings.addValue("height", multiScopes.at(m).getPosition().getHeight());
-		//scopeSettings.addValue("legendFontName", "verdana.ttf");
-		//scopeSettings.addValue("legendFontSize", 12);
-		//scopeSettings.addTag("scopes");
-		//scopeSettings.pushTag("scopes");
-		nScopes = multiScopes.at(m).scopes.size();
-		for (int s = 0; s < nScopes; s++) {
-			scopeSettings.addTag("scope");
-			scopeSettings.pushTag("scope", s);
-			scopeSettings.addValue("samplingFrequency", multiScopes.at(m).scopes.at(s).getSamplingFrequency());
-			scopeSettings.addValue("timeWindow", multiScopes.at(m).scopes.at(s).getTimeWindow());
-			scopeSettings.addValue("yMin", multiScopes.at(m).scopes.at(s).getYLims().first);
-			scopeSettings.addValue("yMax", multiScopes.at(m).scopes.at(s).getYLims().second);
-			scopeSettings.addValue("minYSpan", multiScopes.at(m).scopes.at(s).getMinYSpan());
-			int nPlots = multiScopes.at(m).scopes.at(s)._scopePlot.getNumVariables();
-			for (int p = 0; p < nPlots; p++) {
-				scopeSettings.addTag("plot");
-				scopeSettings.pushTag("plot", p);
-				scopeSettings.addValue("plotId", plotId++);
-				scopeSettings.addValue("plotName", multiScopes.at(m).scopes.at(s).getVariableName(p));
-				scopeSettings.addTag("plotColor");
-				scopeSettings.pushTag("plotColor");
-				ofColor plotColor = multiScopes.at(m).scopes.at(s)._scopePlot.getVariableColor(p);
-				scopeSettings.addValue("r", plotColor.r);
-				scopeSettings.addValue("g", plotColor.g);
-				scopeSettings.addValue("b", plotColor.b);
-				scopeSettings.popTag(); // pop plotColor
-				scopeSettings.popTag(); // pop plot
-			}
-			scopeSettings.popTag(); // pop scope
-		}
-		scopeSettings.popTag(); // pop multiScope
-	}
-
-	scopeSettings.saveFile(filename);
-
-	return true;
-}
-
-//bool ofApp::loadScopeSettings(vector<ofxMultiScope> &multiScopes, string filename)
-vector<ofxMultiScope> ofApp::loadScopeSettings(string filename)
-{
-	vector<ofxMultiScope> multiScopes;
-	//int multiScope = 0;
-	//int scope = 0;
-	//int plot = 0;
-	int plotId = 0; // unique ID for each plot
-
-	ofxXmlSettings scopeSettings;
-	scopeSettings.loadFile(filename);
-
-	//ofRectangle scopeArea = ofRectangle(ofPoint(0, 0), ofPoint(ofGetWindowSize()));
-
-//scopeWin = ofxMultiScope(nScopes, scopeArea, legendFont); // Setup the multiScope panel
-
-//for (int i = 0; i<nScopes; i++) {
-//	// Setup the oscilloscopes
-//	scopeWin.scopes.at(i).setup(timeWindow, (i + 1)*samplingFreqMult, vec_names, vec_colors,
-//		yScale, yOffset); // Setup each oscilloscope panel
-//	scopeWin.scopes.at(i).autoscaleY(autoscaleY);
-//}
-
-	int nMultiScopes = scopeSettings.getNumTags("multiScope");
-	for (int m = 0; m < nMultiScopes; m++)
-	{
-		scopeSettings.pushTag("multiScope", m);
-		float x = scopeSettings.getValue("x", 0.f);
-		float y = scopeSettings.getValue("y", 0.f);
-		float width = scopeSettings.getValue("width", ofGetWindowWidth());
-		float height = scopeSettings.getValue("height", ofGetWindowHeight());
-		string legendFontName = scopeSettings.getValue("legendFontName", "verdana.ttf");
-		int legendFontSize = scopeSettings.getValue("legendFontSize", 12);
-		string axesFontName = scopeSettings.getValue("axesFontName", "verdana.ttf");
-		int axesFontSize = scopeSettings.getValue("axesFontSize", 10);
-		int plotLineWidth = scopeSettings.getValue("plotLineWidth", 3);
-		ofRectangle scopeArea = ofRectangle(x, y, width, height);
-
-		int nScopes = scopeSettings.getNumTags("scope");
-		ofTrueTypeFont legendFont;
-		legendFont.load(legendFontName.c_str(), legendFontSize, true, true);
-		multiScopes.emplace_back(nScopes, scopeArea, legendFont); // Setup the multiScope panel
-		ofTrueTypeFont axesFont;
-		axesFont.load(axesFontName, axesFontSize, true, true);
-		multiScopes.at(m).setAxesFont(axesFont);
-		multiScopes.at(m).setPlotLineWidth(plotLineWidth);
-
-		for (int s = 0; s < nScopes; s++) {
-			// Setup the oscilloscopes
-
-			scopeSettings.pushTag("scope", s);
-
-			float timeWindow = scopeSettings.getValue("timeWindow", 15.f);
-			float samplingFrequency = scopeSettings.getValue("samplingFrequency", 15.f);
-			float yMin = scopeSettings.getValue("yMin", 0.f);
-			float yMax = scopeSettings.getValue("yMax", 0.f);
-			float minYSpan = scopeSettings.getValue("minYSpan", 0.f);
-
-			vector<int> plotIds;
-			vector<string> plotNames;
-			vector<ofColor> plotColors;
-
-			int nPlots = scopeSettings.getNumTags("plot");
-			for (int p = 0; p < nPlots; p++) {
-				scopeSettings.pushTag("plot", p);
-				plotNames.push_back(scopeSettings.getValue("plotName", ofToString(plotId)));
-				plotIds.push_back(scopeSettings.getValue("plotId", plotId++));
-				scopeSettings.pushTag("plotColor");
-				plotColors.push_back(ofColor(
-					scopeSettings.getValue("r", 255),
-					scopeSettings.getValue("g", 255),
-					scopeSettings.getValue("b", 255)
-				));
-				scopeSettings.popTag(); // plotColor
-				scopeSettings.popTag(); // plot p
-			}
-
-			multiScopes.at(m).scopes.at(s).setup(timeWindow, samplingFrequency, plotNames, plotColors); // Setup each oscilloscope panel
-			if (yMin == yMax) {
-				multiScopes.at(m).scopes.at(s).autoscaleY(true, minYSpan);
-			}
-			else {
-				multiScopes.at(m).scopes.at(s).setYLims(pair<float, float>(yMin, yMax));
-			}
-			scopeSettings.popTag(); // scope s
-		}
-
-		scopeSettings.popTag(); // multiScope m
-	}
-	//return true;
-	return multiScopes;
 }
