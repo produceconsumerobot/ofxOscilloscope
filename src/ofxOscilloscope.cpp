@@ -25,6 +25,7 @@ ofxScopePlot::ofxScopePlot(ofRectangle plotArea, ofColor zeroLineColor,
 		setZeroLineColor(zeroLineColor);
 		setBackgroundColor(backgroundColor);
 		setPlotLineWidth(plotLineWidth);
+		_yLims = pair<float, float>(0.f, 0.f);
 }
 
 /*
@@ -36,6 +37,7 @@ ofxScopePlot::ofxScopePlot(ofPoint min, ofPoint max, ofColor zeroLineColor,
 		setZeroLineColor(zeroLineColor);
 		setBackgroundColor(backgroundColor);
 		setPlotLineWidth(plotLineWidth);
+		_yLims = pair<float, float>(0.f, 0.f);
 }
 
 /*
@@ -327,14 +329,19 @@ pair<float, float> ofxScopePlot::getMinMaxY() {
 
 /*
 ** setMinMaxY
-** Returns the min and max values of the data in the oscilloscope window as an std::pair
+** Sets the min and max values of the data in the oscilloscope window as an std::pair
 */
 void ofxScopePlot::setMinMaxY(pair<float, float> yLims) {
+	_yLims = yLims;
 	float plotHeight = ofGetWindowSize().y;
 	float ySpan = yLims.second - yLims.first;
 	setYScale(plotHeight / ySpan);
 	float yOffset = (yLims.second + yLims.first) / 2.f;
 	setYOffset(-yOffset * plotHeight / ySpan);
+}
+
+pair<float, float> ofxScopePlot::getYLims() {
+	return _yLims;
 }
 
 /*
@@ -406,6 +413,14 @@ ofColor ofxScopePlot::getVariableColor(int i) {
 */
 float ofxScopePlot::getTimeWindow() {
 	return _timeWindow;
+}
+
+/*
+** getSamplingFrequency
+** Returns the sampling frequency in Hz
+*/
+float ofxScopePlot::getSamplingFrequency() {
+	return _sampFreq;
 }
 
 
@@ -728,6 +743,14 @@ ofRectangle ofxOscilloscope::getPosition() {
 }
 
 /*
+** getSamplingFreq
+** Sets the sampling frequency
+*/
+float ofxOscilloscope::getSamplingFrequency() {
+	return _scopePlot.getSamplingFrequency();
+}
+
+/*
 ** setTimeWindow
 ** Sets the timeWindow covered by the scope.
 */ 
@@ -784,8 +807,16 @@ void ofxOscilloscope::autoscaleY(bool autoscale, float minYSpan) {
 	_minYSpan = minYSpan;
 }
 
+float ofxOscilloscope::getMinYSpan() {
+	return _minYSpan;
+}
+
 void ofxOscilloscope::setYLims(pair<float, float> yLims) {
 	_scopePlot.setMinMaxY(yLims);
+}
+
+pair<float, float> ofxOscilloscope::getYLims() {
+	return _scopePlot.getYLims();
 }
 
 /*
