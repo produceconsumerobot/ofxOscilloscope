@@ -6,7 +6,7 @@ void ofApp::setup() {
 
 	patchboard.loadFile(patchboardFile);
 
-	if (!patchboard.settings.input["type"].compare("OSC"))
+	if (patchboard.settings.input["type"].compare("OSC") != 0)
 	{
 		cout << "ERROR: Specify OSC as input type in " << patchboardFile << endl;
 		while (true);
@@ -15,13 +15,14 @@ void ofApp::setup() {
 	int port = ofToInt(patchboard.settings.input["port"]);
 	receiver.setup(port);
 	
-	vector<ofxMultiScope> scopeWins = ofxMultiScope::loadScopeSettings();
+	scopeWins = ofxMultiScope::loadScopeSettings();
+	plotIdIndexes = ofxMultiScope::getPlotIdIndexes();
 	if (scopeWins.size() == 0) {
 		cout << "ABORTING: No ofxOscilloscope settings found..." << endl;
 		while(true);
 	}
 
-	scopeWin = scopeWins.at(0);
+	//scopeWin = scopeWins.at(0);
 
 	// Allocate space for new data in form data[nVariables][nPoints]
 	const int nVariables = 2;
@@ -72,20 +73,30 @@ void ofApp::update() {
 
 
 
+		// Iterate through patchcords to see if we're plotting any of the incoming data
 		for (auto patch = patchboard.patchcords.begin(); patch != patchboard.patchcords.end(); ++patch)
 		{
-			// check for mouse moved message
-			if (m.getAddress() == patch->first) {
-				// both the arguments are floats
-				float mouseXf = m.getArgAsFloat(0);
-				float mouseYf = m.getArgAsFloat(1);
-				data.at(0).clear();
-				data.at(1).clear();
-				data.at(0).push_back(mouseXf);
-				data.at(1).push_back(mouseYf);
-				for (int scope = 0; scope < patch->second.size(); scope++)
+			// ToDo: Handle cases where specific data array indexes go to specific plots
+			string address = patch->first;
+			if (m.getAddress().compare(address) == 0) // if we're plotting this address!
+			{
+				for (int pcord = 0; pcord < patch->second.size(); pcord++)
 				{
-					scopeWin.scopes.at(scope).updateData(data);
+					// plot it to the specified plotId(s)
+					vector<size_t> ind = plotIdIndexes[ofToInt(patch->second.at(pcord))];
+					if (ind.size() > 0)
+					{
+						vector<float> data;
+						int w = ind.at(0); // ScopeWin
+						int s = ind.at(1); // Scope
+						int v = ind.at(2); // Variable/Plot
+						for (size_t i = 0; i < m.getNumArgs(); i++)
+						{
+							data.clear();
+							data.push_back(m.getArgAsFloat(i));
+							scopeWins.at(w).scopes.at(s).updateData(v, data);
+						}
+					}
 				}
 			}
 		}
@@ -113,8 +124,11 @@ void ofApp::update() {
 void ofApp::draw() {
 	//printf("draw()\n");
 
-	scopeWin.plot();
-	ofSleepMillis(100);
+	for (int w = 0; w < scopeWins.size(); w++)
+	{
+		scopeWins.at(w).plot();
+	}
+	//SleepMillis(100);
 }
 
 //--------------------------------------------------------------
@@ -125,251 +139,29 @@ void ofApp::exit() {
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
 
-	// Increment the yScale
-	if (key == '+') {
-		if (selectedScope == 0) {
-			scopeWin.incrementYScale();
-		}
-		else {
-			scopeWin.scopes.at(selectedScope - 1).incrementYScale();
-		}
-	}
-
-	// Decrement the yScale
-	if ((key == '-') || (key == '_')) {
-		if (selectedScope == 0) {
-			scopeWin.decrementYScale();
-		}
-		else {
-			scopeWin.scopes.at(selectedScope - 1).decrementYScale();
-		}
-	}
-
-	// Increment the yOffset
-	if (key == 357) { // Up Arrow
-		if (selectedScope == 0) {
-			scopeWin.incrementYOffset();
-		}
-		else {
-			scopeWin.scopes.at(selectedScope - 1).incrementYOffset();
-		}
-	}
-
-	// Decrement the yOffset
-	if (key == 359) { // Down Arrow
-		if (selectedScope == 0) {
-			scopeWin.decrementYOffset();
-		}
-		else {
-			scopeWin.scopes.at(selectedScope - 1).decrementYOffset();
-		}
-	}
-
-	// Increment the timeWindow
-	if (key == 358) { // Right Arrow
-		if (selectedScope == 0) {
-			scopeWin.incrementTimeWindow();
-		}
-		else {
-			scopeWin.scopes.at(selectedScope - 1).incrementTimeWindow();
-		}
-	}
-
-	// Decrement the timeWindow
-	if (key == 356) { // Left Arrow
-		if (selectedScope == 0) {
-			scopeWin.decrementTimeWindow();
-		}
-		else {
-			scopeWin.scopes.at(selectedScope - 1).decrementTimeWindow();
-		}
-	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key) {
 	cout << "Key Released: " << key << "\n";
 
-	// Choose an oscilloscope panel for changing yScale/yOffset/timeWindow
-	// Starts counting from 1
-	// Zero = all
-	if ((key >= 48) && (key <= 57)) {
-		int number = key - 48;
-		if (number <= nScopes) {
-			selectedScope = number;
-			scopeWin.setOutlineWidth(1);
-			if (selectedScope > 0) {
-				scopeWin.scopes.at(selectedScope - 1).setOutlineWidth(5);
-			}
-		}
-	}
-
 	if (key == 32) { // Space Bar
 		isPaused = !isPaused;
 	}
 
 
-	// testing line widths
-	if (key == ',') {
-		scopeWin.scopes.at(1).setOutlineWidth(10);
-		scopeWin.scopes.at(1).setPlotLineWidth(5);
-	}
-	if (key == '.') {
-		scopeWin.scopes.at(1).setOutlineWidth(1);
-		scopeWin.scopes.at(1).setPlotLineWidth(1);
-	}
-
-
-	// testing setVariableNames
-	if (key == 'n') {
-		const int nVariables = 2;
-		string names[nVariables] = { "happy", "joy" };
-		std::vector<string> vec_names(names, names + nVariables);
-		scopeWin.scopes.at(1).setVariableNames(vec_names);
-	}
-	if (key == 'm') {
-		const int nVariables = 2;
-		string names[nVariables] = { "wow", "zing" };
-		std::vector<string> vec_names(names, names + nVariables);
-		scopeWin.scopes.at(1).setVariableNames(vec_names);
-	}
-
-	//testing setVariableColors
-	if (key == 'z') {
-		const int nVariables = 2;
-		ofColor colors[nVariables] = { ofColor(0,0,0), ofColor(255,0,0) };
-		std::vector<ofColor> vec_colors(colors, colors + nVariables);
-		scopeWin.scopes.at(1).setVariableColors(vec_colors);
-	}
-	if (key == 'x') {
-		const int nVariables = 2;
-		ofColor colors[nVariables] = { ofColor(0,255,0), ofColor(255,255,0) };
-		std::vector<ofColor> vec_colors(colors, colors + nVariables);
-		scopeWin.scopes.at(1).setVariableColors(vec_colors);
-	}
-
-	//testing setTimeWindow
-	if (key == 't') {
-		scopeWin.setTimeWindow(5);
-	}
-	if (key == 'y') {
-		scopeWin.setTimeWindow(10);
-	}
-	if (key == 'u') {
-		scopeWin.scopes.at(1).setTimeWindow(15);
-	}
-
-	//testing setPosition
-	if (key == 'a') {
-		ofRectangle pos = scopeWin.scopes.at(1).getPosition();
-		pos.setX(pos.getX() + 50);
-		scopeWin.scopes.at(1).setPosition(pos);
-	}
-	if (key == 's') {
-		ofRectangle pos = scopeWin.getPosition();
-		pos.setX(pos.getX() + 50);
-		scopeWin.setPosition(pos);
-	}
-	if (key == 'd') {
-		min = ofPoint(0., 0.);
-		max = ofPoint(ofGetWindowSize().x, ofGetWindowSize().y);
-		scopeWin.setPosition(min, max);
-	}
-	if (key == 'f') {
-		min = ofPoint(50., 300.);
-		max = ofPoint(ofGetWindowSize().x - 200., ofGetWindowSize().y - 200.);
-		scopeWin.setPosition(min, max);
-	}
-
-	// testing backgroundColor
-	if (key == 'c') {
-		ofColor color = ofColor(0, 0, 0, 0.);
-		scopeWin.setBackgroundColor(color);
-	}
-	if (key == 'v') {
-		ofColor color = ofColor(0, 255, 0, 128);
-		scopeWin.setBackgroundColor(color);
-	}
-	if (key == 'b') {
-		ofColor color = ofColor(0, 0, 255, 128);
-		scopeWin.scopes.at(1).setBackgroundColor(color);
-	}
-
-	// testing setOutlineColor
-	if (key == 'j') {
-		ofColor color = ofColor(0, 0, 0, 255);
-		scopeWin.setOutlineColor(color);
-	}
-	if (key == 'k') {
-		ofColor color = ofColor(0, 255, 0, 128);
-		scopeWin.setOutlineColor(color);
-	}
-	if (key == 'l') {
-		ofColor color = ofColor(0, 0, 255, 128);
-		scopeWin.scopes.at(1).setOutlineColor(color);
-	}
-
-	// testing setZeroLineColor
-	if (key == 'i') {
-		ofColor color = ofColor(0, 0, 0, 255);
-		scopeWin.setZeroLineColor(color);
-	}
-	if (key == 'o') {
-		ofColor color = ofColor(0, 255, 0, 128);
-		scopeWin.setZeroLineColor(color);
-	}
-	if (key == 'p') {
-		ofColor color = ofColor(0, 0, 255, 128);
-		scopeWin.scopes.at(1).setZeroLineColor(color);
-	}
-
-	// testing setLegendFont
-	if (key == 'g') {
-		ofTrueTypeFont legendFont;
-		legendFont.load("verdana.ttf", 12, true, true);
-		legendFont.setLetterSpacing(0.7);
-		scopeWin.setLegendFont(legendFont);
-	}
-	if (key == 'h') {
-		ofTrueTypeFont legendFont;
-		legendFont.load("verdana.ttf", 12, true, true);
-		legendFont.setLineHeight(15.0f);
-		legendFont.setLetterSpacing(1.5);
-		scopeWin.scopes.at(1).setLegendFont(legendFont);
-	}
-
-	// testing setLegendWidth
-	if (key == 'q') {
-		scopeWin.setLegendWidth(75);
-	}
-	if (key == 'w') {
-		scopeWin.scopes.at(1).setLegendWidth(200);
-	}
-
-	// testing setTextSpacing
-	if (key == 'e') {
-		scopeWin.setTextSpacing(15, 15);
-	}
-	if (key == 'r') {
-		scopeWin.scopes.at(1).setTextSpacing(20, 10);
-	}
-	if (key == ':') {
-		autoscaleY = !autoscaleY;
-		for (int i = 0; i<nScopes; i++) {
-			scopeWin.scopes.at(i).autoscaleY(autoscaleY);
-		}
-	}
 	if (key == 'S') {
-		vector<ofxMultiScope> scopeWins;
-		scopeWins.push_back(scopeWin);
 		ofxMultiScope::saveScopeSettings(scopeWins);
 	}
 	if (key == 'L') {
 		vector<ofxMultiScope> scopeWins = ofxMultiScope::loadScopeSettings();
-		scopeWin = scopeWins.at(0);
+		plotIdIndexes = ofxMultiScope::getPlotIdIndexes();
 	}
 	if (key == 'P') {
 		patchboard.loadFile(patchboardFile);
+		for (int w = 0; w < scopeWins.size(); w++) {
+			scopeWins.at(w).clearData();
+		}
 	}
 	
 

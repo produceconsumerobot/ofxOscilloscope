@@ -10,7 +10,7 @@
 	</settings>
 	<patchcords>
 		<patch>
-			<input>//mouse/position</input>
+			<input>/mouse/position</input>
 			<output>0</output>
 		</patch>
 		<patch>
@@ -19,7 +19,7 @@
 		</patch>
 		<patch>
 			<input>/mouse/position</input>
-			<output>2</output>
+			<output>3</output>
 		</patch>
 	</patchcords>
 </patchboard>	

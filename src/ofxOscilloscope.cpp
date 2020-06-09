@@ -937,6 +937,31 @@ void ofxOscilloscope::updateData(std::vector<std::vector<float> > data) {
 	_scopePlot.updateData(data);
 }
 
+
+/*
+** updateData
+**
+** Data should come in the form [nDataPoints]
+**
+** Loads new data onto the oscillocope buffer. Must have the same number
+** of variables initialized with setup. plot() may be called to display the
+** updated buffer.
+*/
+void ofxOscilloscope::updateData(size_t variableNum, std::vector<float> data) {
+#ifdef DEBUG_PRINT
+	printf("ofxOscilloscope::updateData\n");
+#endif
+	size_t numVars = _scopePlot.getNumVariables();
+	if (variableNum < numVars)
+	{
+		std::vector<std::vector<float>> multiData;
+		multiData.resize(numVars);
+		multiData.at(variableNum) = data;
+		_scopePlot.updateData(multiData);
+	}
+}
+
+
 /*
 ** updateData (float ** data, int nPoints)
 **
@@ -1541,12 +1566,16 @@ vector<vector<vector<int>>> ofxMultiScope::getPlotIds(string filename)
 	scopeSettings.loadFile(filename);
 
 	int nMultiScopes = scopeSettings.getNumTags("multiScope");
+	plotIds.resize(nMultiScopes);
 	for (int m = 0; m < nMultiScopes; m++)
 	{
+		scopeSettings.pushTag("multiScope");
 		int nScopes = scopeSettings.getNumTags("scope");
+		plotIds.at(m).resize(nScopes);
 		for (int s = 0; s < nScopes; s++) {
 			scopeSettings.pushTag("scope", s);
 			int nPlots = scopeSettings.getNumTags("plot");
+			plotIds.at(m).at(s).resize(nPlots);
 			for (int p = 0; p < nPlots; p++) {
 				scopeSettings.pushTag("plot", p);
 				plotIds.at(m).at(s).at(p) = scopeSettings.getValue("plotId", plotId++);

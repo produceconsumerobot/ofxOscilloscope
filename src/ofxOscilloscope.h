@@ -154,6 +154,7 @@ public:
 	// Updating data
 	void updateData(std::vector<float> data); // data[_nVariables] or data[nPoints] iff _nVariables==1
 	void updateData(std::vector<std::vector<float> > data); // data[_nVariables][nPoints]
+	void updateData(size_t variableNum, std::vector<float> data); // data[nPoints]
 	void updateData(float ** data, int nPoints); // ** DEPRECATED ** data[_nVariables][nPoints] 
 	void clearData();	// Sets all data to the most recent value;
 

@@ -25,7 +25,7 @@ public:
 	//bool loadScopeSettings(vector<ofxMultiScope> &multiScopes, string filename = "scope_settings.xml");
 	vector<ofxMultiScope> loadScopeSettings(string filename = "scopeSettings.xml");
 
-	ofxMultiScope scopeWin;
+	//ofxMultiScope scopeWin;
 	int newPoints;
 	int nScopes;
 	std::vector<std::vector<float> > data;
@@ -43,5 +43,8 @@ public:
 	ofxOscReceiver receiver;
 	string patchboardFile = "oscInputSettings.xml";
 	Patchboard patchboard;
+
+	vector<ofxMultiScope> scopeWins;
+	unordered_map<int, vector<size_t>> plotIdIndexes;
 
 };
