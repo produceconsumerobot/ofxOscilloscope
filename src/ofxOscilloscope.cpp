@@ -1530,3 +1530,59 @@ vector<ofxMultiScope> ofxMultiScope::loadScopeSettings(string filename)
 	}
 	return multiScopes;
 }
+
+vector<vector<vector<int>>> ofxMultiScope::getPlotIds(string filename)
+{
+
+	vector<vector<vector<int>>> plotIds;
+	int plotId = 0;
+
+	ofxXmlSettings scopeSettings;
+	scopeSettings.loadFile(filename);
+
+	int nMultiScopes = scopeSettings.getNumTags("multiScope");
+	for (int m = 0; m < nMultiScopes; m++)
+	{
+		int nScopes = scopeSettings.getNumTags("scope");
+		for (int s = 0; s < nScopes; s++) {
+			scopeSettings.pushTag("scope", s);
+			int nPlots = scopeSettings.getNumTags("plot");
+			for (int p = 0; p < nPlots; p++) {
+				scopeSettings.pushTag("plot", p);
+				plotIds.at(m).at(s).at(p) = scopeSettings.getValue("plotId", plotId++);
+				scopeSettings.popTag(); // plot p
+			}
+			scopeSettings.popTag(); // scope s
+		}
+		scopeSettings.popTag(); // multiScope m
+	}
+
+	if (plotId == 0) {
+		ofLogNotice() << "FILE: " + filename + "NOT FOUND" << endl;
+	}
+	return plotIds;
+}
+
+unordered_map<int, vector<size_t>> ofxMultiScope::getPlotIdIndexes(string filename)
+{
+	vector<vector<vector<int>>> plotIds = getPlotIds(filename);
+	unordered_map<int, vector<size_t>> plotIdIndexes;
+	for (int m = 0; m < plotIds.size(); m++)
+	{
+		for (int s = 0; s < plotIds.at(m).size(); s++)
+		{
+			for (int p = 0; p < plotIds.at(m).at(s).size(); p++) {
+				vector<size_t> indexes;
+				indexes.push_back(m);
+				indexes.push_back(s);
+				indexes.push_back(p);
+				auto result = plotIdIndexes.emplace(plotIds.at(m).at(s).at(p), indexes);
+				if (!result.second)
+				{
+					ofLogWarning() << "Duplicate plot ID found: " << plotIds.at(m).at(s).at(p) << endl;
+				}
+			}
+		}
+	}
+	return plotIdIndexes;
+}

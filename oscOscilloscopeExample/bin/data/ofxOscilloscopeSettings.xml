@@ -6,8 +6,8 @@
     <scope>
         <samplingFrequency>100.000000000</samplingFrequency>
         <timeWindow>5.000000000</timeWindow>
-        <yMin>-1000.000000000</yMin>
-        <yMax>1000.000000000</yMax>
+        <yMin>0.000000000</yMin>
+        <yMax>10.000000000</yMax>
         <minYSpan>1.000000000</minYSpan>
         <plot>
             <plotId>0</plotId>

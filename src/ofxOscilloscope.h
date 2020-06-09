@@ -45,6 +45,7 @@ private:
 
 
 public:
+
 	// Constructors
 	ofxScopePlot(ofRectangle plotArea,
 		ofColor zeroLineColor=ofColor(240,240,240), ofColor backgroundColor=ofColor(0.,0.,0.,0.),
@@ -226,6 +227,8 @@ public:
 	std::vector<ofxOscilloscope> scopes;
 
 	static vector<ofxMultiScope> loadScopeSettings(string filename = "ofxOscilloscopeSettings.xml");
+	static vector<vector<vector<int>>> getPlotIds(string filename = "ofxOscilloscopeSettings.xml");
+	static unordered_map<int, vector<size_t>> getPlotIdIndexes(string filename = "ofxOscilloscopeSettings.xml");
 	static bool saveScopeSettings(vector<ofxMultiScope> &multiScopes, string filename = "ofxOscilloscopeSettings.xml");
 
 	// Constructors

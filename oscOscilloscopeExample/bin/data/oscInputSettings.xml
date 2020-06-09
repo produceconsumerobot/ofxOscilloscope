@@ -1,0 +1,25 @@
+<patchboard>
+	<settings>
+		<input>
+			<type>OSC</type>
+			<port>12345</port>
+		</input>
+		<output>
+			<type>ofxOscilloscope</type>
+		</output>
+	</settings>
+	<patchcords>
+		<patch>
+			<input>//mouse/position</input>
+			<output>0</output>
+		</patch>
+		<patch>
+			<input>/EmotiBit/PPG:RED</input>
+			<output>1</output>
+		</patch>
+		<patch>
+			<input>/mouse/position</input>
+			<output>2</output>
+		</patch>
+	</patchcords>
+</patchboard>	

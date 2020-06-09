@@ -2,6 +2,8 @@
 
 #include "ofMain.h"
 #include "ofxOscilloscope.h"
+#include "ofxOsc.h"
+#include "patchboard.h"
 
 class ofApp : public ofBaseApp {
 public:
@@ -37,4 +39,9 @@ public:
 
 	bool isPaused;
 	bool autoscaleY = false;
+
+	ofxOscReceiver receiver;
+	string patchboardFile = "oscInputSettings.xml";
+	Patchboard patchboard;
+
 };

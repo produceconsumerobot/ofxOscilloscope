@@ -3,7 +3,17 @@
 //--------------------------------------------------------------
 void ofApp::setup() {
 	ofBackground(255, 255, 255);
-	
+
+	patchboard.loadFile(patchboardFile);
+
+	if (!patchboard.settings.input["type"].compare("OSC"))
+	{
+		cout << "ERROR: Specify OSC as input type in " << patchboardFile << endl;
+		while (true);
+	}
+		
+	int port = ofToInt(patchboard.settings.input["port"]);
+	receiver.setup(port);
 	
 	vector<ofxMultiScope> scopeWins = ofxMultiScope::loadScopeSettings();
 	if (scopeWins.size() == 0) {
@@ -30,17 +40,17 @@ void ofApp::setup() {
 //--------------------------------------------------------------
 void ofApp::update() {
 	// Generate dummy data
-	if (zeroData) {
-		data.at(0).assign(data.at(0).size(), 0.);
-	}
-	else {
-		for (int i = 0; i<newPoints; i++) {
-			data.at(0).at(i) = counter; counter++; if (counter>ofGetWindowSize().y / 2) counter = -ofGetWindowSize().y / 2;// + ofRandomf()
-		}
-	}
-	for (int i = 0; i<newPoints; i++) {
-		data.at(1).at(i) = counter2; counter2--; if (counter2<-50) counter2 = 50;// + ofRandomf()
-	}
+	//if (zeroData) {
+	//	data.at(0).assign(data.at(0).size(), 0.);
+	//}
+	//else {
+	//	for (int i = 0; i<newPoints; i++) {
+	//		data.at(0).at(i) = counter; counter++; if (counter>ofGetWindowSize().y / 2) counter = -ofGetWindowSize().y / 2;// + ofRandomf()
+	//	}
+	//}
+	//for (int i = 0; i<newPoints; i++) {
+	//	data.at(1).at(i) = counter2; counter2--; if (counter2<-50) counter2 = 50;// + ofRandomf()
+	//}
 
 	/*
 	// Code for Testing arrays...
@@ -54,13 +64,40 @@ void ofApp::update() {
 	}
 	*/
 
-	// Add data to the scopes
-	if (!isPaused) {
-		for (int i = 0; i< scopeWin.scopes.size(); i++) {
-			scopeWin.scopes.at(i).updateData(data);
-			//scopeWin.scopes.at(i).updateData(array_data, data.at(0).size());
+	while (receiver.hasWaitingMessages()) {
+
+		// get the next message
+		ofxOscMessage m;
+		receiver.getNextMessage(m);
+
+
+
+		for (auto patch = patchboard.patchcords.begin(); patch != patchboard.patchcords.end(); ++patch)
+		{
+			// check for mouse moved message
+			if (m.getAddress() == patch->first) {
+				// both the arguments are floats
+				float mouseXf = m.getArgAsFloat(0);
+				float mouseYf = m.getArgAsFloat(1);
+				data.at(0).clear();
+				data.at(1).clear();
+				data.at(0).push_back(mouseXf);
+				data.at(1).push_back(mouseYf);
+				for (int scope = 0; scope < patch->second.size(); scope++)
+				{
+					scopeWin.scopes.at(scope).updateData(data);
+				}
+			}
 		}
 	}
+
+	//// Add data to the scopes
+	//if (!isPaused) {
+	//	for (int i = 0; i< scopeWin.scopes.size(); i++) {
+	//		scopeWin.scopes.at(i).updateData(data);
+	//		//scopeWin.scopes.at(i).updateData(array_data, data.at(0).size());
+	//	}
+	//}
 
 	/*
 	// Code for Testing arrays...
@@ -331,6 +368,11 @@ void ofApp::keyReleased(int key) {
 		vector<ofxMultiScope> scopeWins = ofxMultiScope::loadScopeSettings();
 		scopeWin = scopeWins.at(0);
 	}
+	if (key == 'P') {
+		patchboard.loadFile(patchboardFile);
+	}
+	
+
 }
 
 
