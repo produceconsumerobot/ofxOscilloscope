@@ -23,7 +23,11 @@ bool Patchboard::loadFile(const string& patchboardFile)
 			cout << indent << child->ToElement()->Value() << ": " << child->ToElement()->GetText() << endl;
 			settings.input[child->ToElement()->Value()] = child->ToElement()->GetText();
 		}
-		if (count == 0) return false; // no inputs
+		if (count == 0)
+		{
+			cout << "Patchboard::loadFile -- no inputs" << endl;
+			return false; // no inputs
+		}
 		xmlSettings.popTag(); // pop input
 
 		xmlSettings.pushTag("output");
@@ -35,7 +39,11 @@ bool Patchboard::loadFile(const string& patchboardFile)
 			cout << indent << child->ToElement()->Value() << ": " << child->ToElement()->GetText() << endl;
 			settings.output[child->ToElement()->Value()] = child->ToElement()->GetText();
 		}
-		if (count == 0) return false; // no inputs
+		if (count == 0)
+		{
+			cout << "Patchboard::loadFile -- no outputs" << endl;
+			return false; // no outputs
+		}
 		xmlSettings.popTag(); // pop output
 		xmlSettings.popTag(); // pop settings
 
@@ -58,6 +66,10 @@ bool Patchboard::loadFile(const string& patchboardFile)
 		if (nPatches == 0) return false; // no patches
 
 		return true;
+	}
+	else
+	{
+		cout << "Patchboard::loadFile: File not found " << _filename << endl;
 	}
 	return false;
 }
