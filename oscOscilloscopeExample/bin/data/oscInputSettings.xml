@@ -14,12 +14,16 @@
 			<output>0</output>
 		</patch>
 		<patch>
-			<input>/EmotiBit/PPG:RED</input>
-			<output>1</output>
+			<input>/EmotiBit/PPG:IR</input>
+			<output>2</output>
 		</patch>
 		<patch>
-			<input>/mouse/position</input>
+			<input>/EmotiBit/PPG:RED</input>
 			<output>3</output>
+		</patch>
+		<patch>
+			<input>/EmotiBit/EDA</input>
+			<output>4</output>
 		</patch>
 	</patchcords>
 </patchboard>	

@@ -154,7 +154,7 @@ void ofApp::keyReleased(int key) {
 		ofxMultiScope::saveScopeSettings(scopeWins);
 	}
 	if (key == 'L') {
-		vector<ofxMultiScope> scopeWins = ofxMultiScope::loadScopeSettings();
+		scopeWins = ofxMultiScope::loadScopeSettings();
 		plotIdIndexes = ofxMultiScope::getPlotIdIndexes();
 	}
 	if (key == 'P') {

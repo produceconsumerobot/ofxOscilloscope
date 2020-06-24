@@ -5,13 +5,13 @@
     <height>768.000000000</height>
     <scope>
         <samplingFrequency>60.000000000</samplingFrequency>
-        <timeWindow>5.000000000</timeWindow>
+        <timeWindow>10.000000000</timeWindow>
         <yMin>0.000000000</yMin>
         <yMax>1.000000000</yMax>
         <minYSpan>1.000000000</minYSpan>
         <plot>
             <plotId>0</plotId>
-            <plotName>/mouse/position:x</plotName>
+            <plotName>mouse</plotName>
             <plotColor>
                 <r>0</r>
                 <g>0</g>
@@ -20,9 +20,57 @@
         </plot>
         <plot>
             <plotId>1</plotId>
-            <plotName>/mouse/position:y</plotName>
+            <plotName>-</plotName>
             <plotColor>
                 <r>255</r>
+                <g>0</g>
+                <b>0</b>
+            </plotColor>
+        </plot>
+    </scope>
+    <scope>
+        <samplingFrequency>25.000000000</samplingFrequency>
+        <timeWindow>10.000000000</timeWindow>
+        <yMin>0.000000000</yMin>
+        <yMax>0.000000000</yMax>
+        <minYSpan>1.000000000</minYSpan>
+        <plot>
+            <plotId>2</plotId>
+            <plotName>PPG:IR</plotName>
+            <plotColor>
+                <r>0</r>
+                <g>0</g>
+                <b>0</b>
+            </plotColor>
+        </plot>
+    </scope>
+    <scope>
+        <samplingFrequency>25.000000000</samplingFrequency>
+        <timeWindow>10.000000000</timeWindow>
+        <yMin>0.000000000</yMin>
+        <yMax>0.000000000</yMax>
+        <minYSpan>1.000000000</minYSpan>
+        <plot>
+            <plotId>3</plotId>
+            <plotName>PPG:RED</plotName>
+            <plotColor>
+                <r>0</r>
+                <g>0</g>
+                <b>0</b>
+            </plotColor>
+        </plot>
+    </scope>
+    <scope>
+        <samplingFrequency>15.000000000</samplingFrequency>
+        <timeWindow>10.000000000</timeWindow>
+        <yMin>0.000000000</yMin>
+        <yMax>0.000000000</yMax>
+        <minYSpan>0.000000000</minYSpan>
+        <plot>
+            <plotId>4</plotId>
+            <plotName>EDA</plotName>
+            <plotColor>
+                <r>0</r>
                 <g>0</g>
                 <b>0</b>
             </plotColor>
@@ -35,91 +83,16 @@
         <yMax>0.000000000</yMax>
         <minYSpan>1.000000000</minYSpan>
         <plot>
-            <plotId>2</plotId>
-            <plotName>happy</plotName>
-            <plotColor>
-                <r>0</r>
-                <g>0</g>
-                <b>0</b>
-            </plotColor>
-        </plot>
-        <plot>
-            <plotId>3</plotId>
-            <plotName>joy</plotName>
-            <plotColor>
-                <r>255</r>
-                <g>0</g>
-                <b>0</b>
-            </plotColor>
-        </plot>
-    </scope>
-    <scope>
-        <samplingFrequency>60.000000000</samplingFrequency>
-        <timeWindow>15.000000000</timeWindow>
-        <yMin>0.000000000</yMin>
-        <yMax>0.000000000</yMax>
-        <minYSpan>1.000000000</minYSpan>
-        <plot>
-            <plotId>4</plotId>
-            <plotName>happy</plotName>
-            <plotColor>
-                <r>0</r>
-                <g>0</g>
-                <b>0</b>
-            </plotColor>
-        </plot>
-        <plot>
             <plotId>5</plotId>
-            <plotName>joy</plotName>
+            <plotName>love</plotName>
             <plotColor>
-                <r>255</r>
+                <r>0</r>
                 <g>0</g>
                 <b>0</b>
             </plotColor>
         </plot>
-    </scope>
-    <scope>
-        <samplingFrequency>60.000000000</samplingFrequency>
-        <timeWindow>5.000000000</timeWindow>
-        <yMin>0.000000000</yMin>
-        <yMax>0.000000000</yMax>
-        <minYSpan>1.000000000</minYSpan>
         <plot>
             <plotId>6</plotId>
-            <plotName>happy</plotName>
-            <plotColor>
-                <r>0</r>
-                <g>0</g>
-                <b>0</b>
-            </plotColor>
-        </plot>
-        <plot>
-            <plotId>7</plotId>
-            <plotName>joy</plotName>
-            <plotColor>
-                <r>255</r>
-                <g>0</g>
-                <b>0</b>
-            </plotColor>
-        </plot>
-    </scope>
-    <scope>
-        <samplingFrequency>60.000000000</samplingFrequency>
-        <timeWindow>5.000000000</timeWindow>
-        <yMin>0.000000000</yMin>
-        <yMax>0.000000000</yMax>
-        <minYSpan>1.000000000</minYSpan>
-        <plot>
-            <plotId>8</plotId>
-            <plotName>happy</plotName>
-            <plotColor>
-                <r>0</r>
-                <g>0</g>
-                <b>0</b>
-            </plotColor>
-        </plot>
-        <plot>
-            <plotId>9</plotId>
             <plotName>joy</plotName>
             <plotColor>
                 <r>255</r>
