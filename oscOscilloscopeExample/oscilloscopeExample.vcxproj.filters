@@ -58,7 +58,7 @@
     <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\osc\OscTypes.cpp">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Patchboard.cpp">
+    <ClCompile Include="..\src\patchboard.cpp">
       <Filter>addons\ofxOscilloscope\src</Filter>
     </ClCompile>
   </ItemGroup>
