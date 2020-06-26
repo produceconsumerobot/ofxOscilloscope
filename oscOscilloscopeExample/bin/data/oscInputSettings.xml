@@ -25,5 +25,9 @@
 			<input>/EmotiBit/EDA</input>
 			<output>4</output>
 		</patch>
+		<patch>
+			<input>/EmotiBit/ACC:X</input>
+			<output>5</output>
+		</patch>
 	</patchcords>
 </patchboard>	

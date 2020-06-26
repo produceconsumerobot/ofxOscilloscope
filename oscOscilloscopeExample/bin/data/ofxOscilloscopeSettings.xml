@@ -84,19 +84,28 @@
         <minYSpan>1.000000000</minYSpan>
         <plot>
             <plotId>5</plotId>
-            <plotName>love</plotName>
+            <plotName>ACC:X</plotName>
             <plotColor>
                 <r>0</r>
                 <g>0</g>
-                <b>0</b>
+                <b>255</b>
             </plotColor>
         </plot>
         <plot>
             <plotId>6</plotId>
-            <plotName>joy</plotName>
+            <plotName>happy</plotName>
             <plotColor>
                 <r>255</r>
                 <g>0</g>
+                <b>0</b>
+            </plotColor>
+        </plot>
+				<plot>
+            <plotId>6</plotId>
+            <plotName>joy</plotName>
+            <plotColor>
+                <r>0</r>
+                <g>255</g>
                 <b>0</b>
             </plotColor>
         </plot>

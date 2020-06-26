@@ -58,8 +58,8 @@
     <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\osc\OscTypes.cpp">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
     </ClCompile>
-    <ClCompile Include="src\Patchboard.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="..\src\Patchboard.cpp">
+      <Filter>addons\ofxOscilloscope\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -122,9 +122,6 @@
     <ClInclude Include="..\..\ofxXmlSettings\libs\tinyxml.h">
       <Filter>addons\ofxXmlSettings\libs</Filter>
     </ClInclude>
-    <ClInclude Include="src\patchboard.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\ofxOsc\src\ofxOsc.h">
       <Filter>addons\ofxOsc\src</Filter>
     </ClInclude>
@@ -184,6 +181,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\OscTypes.h">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\patchboard.h">
+      <Filter>addons\ofxOscilloscope\src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
