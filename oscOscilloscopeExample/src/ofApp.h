@@ -4,6 +4,7 @@
 #include "ofxOscilloscope.h"
 #include "ofxOsc.h"
 #include "patchboard.h"
+#include "ofxThreadedLogger.h"
 
 class ofApp : public ofBaseApp {
 public:
@@ -46,5 +47,9 @@ public:
 
 	vector<ofxMultiScope> scopeWins;
 	unordered_map<int, vector<size_t>> plotIdIndexes;
+
+	bool recordData;
+	uint64_t recordDataStartTime;
+	LoggerThread dataLogger;
 
 };

@@ -40,31 +40,6 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
-	// Generate dummy data
-	//if (zeroData) {
-	//	data.at(0).assign(data.at(0).size(), 0.);
-	//}
-	//else {
-	//	for (int i = 0; i<newPoints; i++) {
-	//		data.at(0).at(i) = counter; counter++; if (counter>ofGetWindowSize().y / 2) counter = -ofGetWindowSize().y / 2;// + ofRandomf()
-	//	}
-	//}
-	//for (int i = 0; i<newPoints; i++) {
-	//	data.at(1).at(i) = counter2; counter2--; if (counter2<-50) counter2 = 50;// + ofRandomf()
-	//}
-
-	/*
-	// Code for Testing arrays...
-	// DON'T USE ARRAYS UNLESS YOU WANT A HEADACHE
-	float ** array_data = new float*[data.size()];
-	for (int i=0; i<data.size(); i++) {
-	array_data[i] = new float[data.at(i).size()];
-	for (int j=0; j<data.at(i).size(); j++) {
-	array_data[i][j] = data.at(i).at(j);
-	}
-	}
-	*/
-
 	while (receiver.hasWaitingMessages()) {
 
 		// get the next message
@@ -80,6 +55,16 @@ void ofApp::update() {
 			string address = patch->first;
 			if (m.getAddress().compare(address) == 0) // if we're plotting this address!
 			{
+				if (recordData)
+				{
+					dataLogger.push(m.getAddress() + ',' + ofToString(ofGetElapsedTimeMillis() / 1000.f));
+					for (size_t i = 0; i < m.getNumArgs(); i++)
+					{
+						dataLogger.push(m.getArgAsFloat(i));
+					}
+					dataLogger.push('\n');
+				}
+
 				for (int pcord = 0; pcord < patch->second.size(); pcord++)
 				{
 					// plot it to the specified plotId(s)
@@ -101,34 +86,14 @@ void ofApp::update() {
 			}
 		}
 	}
-
-	//// Add data to the scopes
-	//if (!isPaused) {
-	//	for (int i = 0; i< scopeWin.scopes.size(); i++) {
-	//		scopeWin.scopes.at(i).updateData(data);
-	//		//scopeWin.scopes.at(i).updateData(array_data, data.at(0).size());
-	//	}
-	//}
-
-	/*
-	// Code for Testing arrays...
-	// DON'T USE ARRAYS UNLESS YOU WANT A HEADACHE
-	for (int i=0; i<data.size(); i++) {
-	delete[] array_data[i];
-	}
-	delete[] array_data;
-	*/
 }
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-	//printf("draw()\n");
-
 	for (int w = 0; w < scopeWins.size(); w++)
 	{
 		scopeWins.at(w).plot();
 	}
-	//SleepMillis(100);
 }
 
 //--------------------------------------------------------------
@@ -162,6 +127,18 @@ void ofApp::keyReleased(int key) {
 		for (int w = 0; w < scopeWins.size(); w++) {
 			scopeWins.at(w).clearData();
 		}
+	}
+	if (key == 'R')
+	{
+		string localTime = ofGetTimestampString("%Y-%m-%d_%H-%M-%S-%f");
+		dataLogger.setFilename(localTime + ".csv");
+		recordData = true;
+		dataLogger.startThread();
+	}
+	if (key == 'r')
+	{
+		recordData = false;
+		dataLogger.stopThread();
 	}
 	
 
