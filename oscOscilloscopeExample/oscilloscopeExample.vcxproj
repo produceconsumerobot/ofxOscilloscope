@@ -97,7 +97,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxOscilloscope\src;..\..\..\addons\ofxOscilloscope\src\old;..\..\..\addons\ofxXmlSettings\src;..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxOscilloscope\src;..\..\..\addons\ofxOscilloscope\src\old;..\..\..\addons\ofxXmlSettings\src;..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxThreadedLogger\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
@@ -116,7 +116,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxOscilloscope\src;..\..\..\addons\ofxOscilloscope\src\old;..\..\..\addons\ofxXmlSettings\src;..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxOscilloscope\src;..\..\..\addons\ofxOscilloscope\src\old;..\..\..\addons\ofxXmlSettings\src;..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxThreadedLogger\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -135,7 +135,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxOscilloscope\src;..\..\..\addons\ofxOscilloscope\src\old;..\..\..\addons\ofxXmlSettings\src;..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxOscilloscope\src;..\..\..\addons\ofxOscilloscope\src\old;..\..\..\addons\ofxXmlSettings\src;..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxThreadedLogger\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -157,7 +157,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxOscilloscope\src;..\..\..\addons\ofxOscilloscope\src\old;..\..\..\addons\ofxXmlSettings\src;..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxOscilloscope\src;..\..\..\addons\ofxOscilloscope\src\old;..\..\..\addons\ofxXmlSettings\src;..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxThreadedLogger\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
@@ -186,6 +186,7 @@
     <ClCompile Include="..\..\ofxOsc\src\ofxOscParameterSync.cpp" />
     <ClCompile Include="..\..\ofxOsc\src\ofxOscReceiver.cpp" />
     <ClCompile Include="..\..\ofxOsc\src\ofxOscSender.cpp" />
+    <ClCompile Include="..\..\ofxThreadedLogger\src\ofxThreadedLogger.cpp" />
     <ClCompile Include="..\..\ofxXmlSettings\libs\tinyxml.cpp" />
     <ClCompile Include="..\..\ofxXmlSettings\libs\tinyxmlerror.cpp" />
     <ClCompile Include="..\..\ofxXmlSettings\libs\tinyxmlparser.cpp" />
@@ -216,6 +217,7 @@
     <ClInclude Include="..\..\ofxOsc\src\ofxOscParameterSync.h" />
     <ClInclude Include="..\..\ofxOsc\src\ofxOscReceiver.h" />
     <ClInclude Include="..\..\ofxOsc\src\ofxOscSender.h" />
+    <ClInclude Include="..\..\ofxThreadedLogger\src\ofxThreadedLogger.h" />
     <ClInclude Include="..\..\ofxXmlSettings\libs\tinyxml.h" />
     <ClInclude Include="..\..\ofxXmlSettings\src\ofxXmlSettings.h" />
     <ClInclude Include="..\src\patchboard.h" />

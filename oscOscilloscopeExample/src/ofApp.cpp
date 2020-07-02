@@ -45,24 +45,24 @@ void ofApp::update() {
 		// get the next message
 		ofxOscMessage m;
 		receiver.getNextMessage(m);
-
-
+		string messageAddress = m.getAddress();
 
 		// Iterate through patchcords to see if we're plotting any of the incoming data
+		// ToDo: Use unordered_map.find()
 		for (auto patch = patchboard.patchcords.begin(); patch != patchboard.patchcords.end(); ++patch)
 		{
 			// ToDo: Handle cases where specific data array indexes go to specific plots
-			string address = patch->first;
-			if (m.getAddress().compare(address) == 0) // if we're plotting this address!
+			string patchAddress = patch->first;
+			if (messageAddress.compare(patchAddress) == 0) // if we're plotting this address!
 			{
 				if (recordData)
 				{
-					dataLogger.push(m.getAddress() + ',' + ofToString(ofGetElapsedTimeMillis() / 1000.f));
 					for (size_t i = 0; i < m.getNumArgs(); i++)
 					{
-						dataLogger.push(m.getArgAsFloat(i));
+						dataLogger.push(m.getAddress() + ',' 
+							+ ofToString((ofGetElapsedTimeMillis() - recordDataStartTime) / 1000.f) 
+							+ ',' + ofToString(m.getArgAsFloat(i)) + "\n");
 					}
-					dataLogger.push('\n');
 				}
 
 				for (int pcord = 0; pcord < patch->second.size(); pcord++)
@@ -83,6 +83,10 @@ void ofApp::update() {
 						}
 					}
 				}
+			}
+			else
+			{
+				bool heyThere = true;
 			}
 		}
 	}
@@ -108,7 +112,7 @@ void ofApp::keyPressed(int key) {
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key) {
-	cout << "Key Released: " << key << "\n";
+	cout << "Key Released: " << (char) key << "\n";
 
 	if (key == 32) { // Space Bar
 		isPaused = !isPaused;
@@ -130,13 +134,19 @@ void ofApp::keyReleased(int key) {
 	}
 	if (key == 'R')
 	{
+		cout << "Recording OSC Data: ";
 		string localTime = ofGetTimestampString("%Y-%m-%d_%H-%M-%S-%f");
-		dataLogger.setFilename(localTime + ".csv");
+		//string localTime = ofGetTimestampString();
+		string filename = localTime + ".csv";
+		cout << filename << endl;
+		dataLogger.setFilename(filename);
+		recordDataStartTime = ofGetElapsedTimeMillis();
 		recordData = true;
 		dataLogger.startThread();
 	}
 	if (key == 'r')
 	{
+		cout << "Stopping OSC Data Recording";
 		recordData = false;
 		dataLogger.stopThread();
 	}
@@ -178,4 +188,30 @@ void ofApp::gotMessage(ofMessage msg) {
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo) {
 
+}
+
+
+string ofApp::ofGetTimestampString(const string& timestampFormat) {
+	std::stringstream str;
+	auto now = std::chrono::system_clock::now();
+	auto t = std::chrono::system_clock::to_time_t(now);    std::chrono::duration<double> s = now - std::chrono::system_clock::from_time_t(t);
+	int us = s.count() * 1000000;
+	auto tm = *std::localtime(&t);
+	constexpr int bufsize = 256;
+	char buf[bufsize];
+
+	// Beware! an invalid timestamp string crashes windows apps.
+	// so we have to filter out %i (which is not supported by vs)
+	// earlier.
+	auto tmpTimestampFormat = timestampFormat;
+	ofStringReplace(tmpTimestampFormat, "%i", ofToString(us / 1000, 3, '0'));
+	ofStringReplace(tmpTimestampFormat, "%f", ofToString(us, 6, '0'));
+
+	if (strftime(buf, bufsize, tmpTimestampFormat.c_str(), &tm) != 0) {
+		str << buf;
+	}
+	auto ret = str.str();
+
+
+	return ret;
 }

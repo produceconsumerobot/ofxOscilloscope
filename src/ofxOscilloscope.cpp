@@ -1569,7 +1569,7 @@ vector<vector<vector<int>>> ofxMultiScope::getPlotIds(string filename)
 	plotIds.resize(nMultiScopes);
 	for (int m = 0; m < nMultiScopes; m++)
 	{
-		scopeSettings.pushTag("multiScope");
+		scopeSettings.pushTag("multiScope", m);
 		int nScopes = scopeSettings.getNumTags("scope");
 		plotIds.at(m).resize(nScopes);
 		for (int s = 0; s < nScopes; s++) {
@@ -1578,7 +1578,9 @@ vector<vector<vector<int>>> ofxMultiScope::getPlotIds(string filename)
 			plotIds.at(m).at(s).resize(nPlots);
 			for (int p = 0; p < nPlots; p++) {
 				scopeSettings.pushTag("plot", p);
-				plotIds.at(m).at(s).at(p) = scopeSettings.getValue("plotId", plotId++);
+				string plotName = scopeSettings.getValue("plotName", "");
+				int tempPlotId = scopeSettings.getValue("plotId", plotId++);
+				plotIds.at(m).at(s).at(p) = tempPlotId;
 				scopeSettings.popTag(); // plot p
 			}
 			scopeSettings.popTag(); // scope s

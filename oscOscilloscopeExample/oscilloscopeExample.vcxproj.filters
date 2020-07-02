@@ -61,6 +61,9 @@
     <ClCompile Include="..\src\patchboard.cpp">
       <Filter>addons\ofxOscilloscope\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ofxThreadedLogger\src\ofxThreadedLogger.cpp">
+      <Filter>addons\ofxThreadedLogger\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -107,6 +110,12 @@
     </Filter>
     <Filter Include="addons\ofxOsc\libs\oscpack\src\osc">
       <UniqueIdentifier>{86327ca8-889f-42cd-8194-7629b5a69713}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxThreadedLogger">
+      <UniqueIdentifier>{7bb66ecb-8df1-4144-b4db-96dd9ba78bbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxThreadedLogger\src">
+      <UniqueIdentifier>{e707b346-8193-4a46-bd85-c57af54ec417}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -184,6 +193,9 @@
     </ClInclude>
     <ClInclude Include="..\src\patchboard.h">
       <Filter>addons\ofxOscilloscope\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxThreadedLogger\src\ofxThreadedLogger.h">
+      <Filter>addons\ofxThreadedLogger\src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
