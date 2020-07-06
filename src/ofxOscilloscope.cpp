@@ -25,6 +25,7 @@ ofxScopePlot::ofxScopePlot(ofRectangle plotArea, ofColor zeroLineColor,
 		setZeroLineColor(zeroLineColor);
 		setBackgroundColor(backgroundColor);
 		setPlotLineWidth(plotLineWidth);
+		_yLims = pair<float, float>(0.f, 0.f);
 }
 
 /*
@@ -36,6 +37,7 @@ ofxScopePlot::ofxScopePlot(ofPoint min, ofPoint max, ofColor zeroLineColor,
 		setZeroLineColor(zeroLineColor);
 		setBackgroundColor(backgroundColor);
 		setPlotLineWidth(plotLineWidth);
+		_yLims = pair<float, float>(0.f, 0.f);
 }
 
 /*
@@ -327,14 +329,19 @@ pair<float, float> ofxScopePlot::getMinMaxY() {
 
 /*
 ** setMinMaxY
-** Returns the min and max values of the data in the oscilloscope window as an std::pair
+** Sets the min and max values of the data in the oscilloscope window as an std::pair
 */
 void ofxScopePlot::setMinMaxY(pair<float, float> yLims) {
+	_yLims = yLims;
 	float plotHeight = ofGetWindowSize().y;
 	float ySpan = yLims.second - yLims.first;
 	setYScale(plotHeight / ySpan);
 	float yOffset = (yLims.second + yLims.first) / 2.f;
 	setYOffset(-yOffset * plotHeight / ySpan);
+}
+
+pair<float, float> ofxScopePlot::getYLims() {
+	return _yLims;
 }
 
 /*
@@ -406,6 +413,14 @@ ofColor ofxScopePlot::getVariableColor(int i) {
 */
 float ofxScopePlot::getTimeWindow() {
 	return _timeWindow;
+}
+
+/*
+** getSamplingFrequency
+** Returns the sampling frequency in Hz
+*/
+float ofxScopePlot::getSamplingFrequency() {
+	return _sampFreq;
 }
 
 
@@ -728,6 +743,14 @@ ofRectangle ofxOscilloscope::getPosition() {
 }
 
 /*
+** getSamplingFreq
+** Sets the sampling frequency
+*/
+float ofxOscilloscope::getSamplingFrequency() {
+	return _scopePlot.getSamplingFrequency();
+}
+
+/*
 ** setTimeWindow
 ** Sets the timeWindow covered by the scope.
 */ 
@@ -784,8 +807,16 @@ void ofxOscilloscope::autoscaleY(bool autoscale, float minYSpan) {
 	_minYSpan = minYSpan;
 }
 
+float ofxOscilloscope::getMinYSpan() {
+	return _minYSpan;
+}
+
 void ofxOscilloscope::setYLims(pair<float, float> yLims) {
 	_scopePlot.setMinMaxY(yLims);
+}
+
+pair<float, float> ofxOscilloscope::getYLims() {
+	return _scopePlot.getYLims();
 }
 
 /*
@@ -905,6 +936,31 @@ void ofxOscilloscope::updateData(std::vector<std::vector<float> > data) {
 #endif
 	_scopePlot.updateData(data);
 }
+
+
+/*
+** updateData
+**
+** Data should come in the form [nDataPoints]
+**
+** Loads new data onto the oscillocope buffer. Must have the same number
+** of variables initialized with setup. plot() may be called to display the
+** updated buffer.
+*/
+void ofxOscilloscope::updateData(size_t variableNum, std::vector<float> data) {
+#ifdef DEBUG_PRINT
+	printf("ofxOscilloscope::updateData\n");
+#endif
+	size_t numVars = _scopePlot.getNumVariables();
+	if (variableNum < numVars)
+	{
+		std::vector<std::vector<float>> multiData;
+		multiData.resize(numVars);
+		multiData.at(variableNum) = data;
+		_scopePlot.updateData(multiData);
+	}
+}
+
 
 /*
 ** updateData (float ** data, int nPoints)
@@ -1356,4 +1412,208 @@ void ofxMultiScope::clearData() {
 	for (int i = 0; i<scopes.size(); i++) {
 		scopes.at(i).clearData();
 	}
+}
+
+
+bool ofxMultiScope::saveScopeSettings(vector<ofxMultiScope> &multiScopes, string filename)
+{
+	int plotId = 0;
+
+	// ToDo: add remaining parameters that can be specified in ofxOscilloscope
+
+	ofxXmlSettings scopeSettings;
+	scopeSettings.clear();
+
+	int nMultiScopes = multiScopes.size();
+	for (int m = 0; m < nMultiScopes; m++)
+	{
+		//scopeSettings.addTag("multiScopes");
+		//scopeSettings.pushTag("multiScopes");
+		scopeSettings.addTag("multiScope");
+		scopeSettings.pushTag("multiScope", m);
+		scopeSettings.addValue("x", multiScopes.at(m).getPosition().getX());
+		scopeSettings.addValue("y", multiScopes.at(m).getPosition().getY());
+		scopeSettings.addValue("width", multiScopes.at(m).getPosition().getWidth());
+		scopeSettings.addValue("height", multiScopes.at(m).getPosition().getHeight());
+		//scopeSettings.addValue("legendFontName", "verdana.ttf");
+		//scopeSettings.addValue("legendFontSize", 12);
+		//scopeSettings.addTag("scopes");
+		//scopeSettings.pushTag("scopes");
+		int nScopes = multiScopes.at(m).scopes.size();
+		for (int s = 0; s < nScopes; s++) {
+			scopeSettings.addTag("scope");
+			scopeSettings.pushTag("scope", s);
+			scopeSettings.addValue("samplingFrequency", multiScopes.at(m).scopes.at(s).getSamplingFrequency());
+			scopeSettings.addValue("timeWindow", multiScopes.at(m).scopes.at(s).getTimeWindow());
+			scopeSettings.addValue("yMin", multiScopes.at(m).scopes.at(s).getYLims().first);
+			scopeSettings.addValue("yMax", multiScopes.at(m).scopes.at(s).getYLims().second);
+			scopeSettings.addValue("minYSpan", multiScopes.at(m).scopes.at(s).getMinYSpan());
+			int nPlots = multiScopes.at(m).scopes.at(s)._scopePlot.getNumVariables();
+			for (int p = 0; p < nPlots; p++) {
+				scopeSettings.addTag("plot");
+				scopeSettings.pushTag("plot", p);
+				scopeSettings.addValue("plotId", plotId++);
+				scopeSettings.addValue("plotName", multiScopes.at(m).scopes.at(s).getVariableName(p));
+				scopeSettings.addTag("plotColor");
+				scopeSettings.pushTag("plotColor");
+				ofColor plotColor = multiScopes.at(m).scopes.at(s)._scopePlot.getVariableColor(p);
+				scopeSettings.addValue("r", plotColor.r);
+				scopeSettings.addValue("g", plotColor.g);
+				scopeSettings.addValue("b", plotColor.b);
+				scopeSettings.popTag(); // pop plotColor
+				scopeSettings.popTag(); // pop plot
+			}
+			scopeSettings.popTag(); // pop scope
+		}
+		scopeSettings.popTag(); // pop multiScope
+	}
+
+	scopeSettings.saveFile(filename);
+
+	return true;
+}
+
+vector<ofxMultiScope> ofxMultiScope::loadScopeSettings(string filename)
+{
+	// ToDo: add remaining parameters that can be specified in ofxOscilloscope
+
+	vector<ofxMultiScope> multiScopes;
+	int plotId = 0; // unique ID for each plot
+
+	ofxXmlSettings scopeSettings;
+	scopeSettings.loadFile(filename);
+
+	int nMultiScopes = scopeSettings.getNumTags("multiScope");
+	for (int m = 0; m < nMultiScopes; m++)
+	{
+		scopeSettings.pushTag("multiScope", m);
+		float x = scopeSettings.getValue("x", 0.f);
+		float y = scopeSettings.getValue("y", 0.f);
+		float width = scopeSettings.getValue("width", ofGetWindowWidth());
+		float height = scopeSettings.getValue("height", ofGetWindowHeight());
+		string legendFontName = scopeSettings.getValue("legendFontName", "verdana.ttf");
+		int legendFontSize = scopeSettings.getValue("legendFontSize", 12);
+		string axesFontName = scopeSettings.getValue("axesFontName", "verdana.ttf");
+		int axesFontSize = scopeSettings.getValue("axesFontSize", 10);
+		int plotLineWidth = scopeSettings.getValue("plotLineWidth", 3);
+		ofRectangle scopeArea = ofRectangle(x, y, width, height);
+
+		int nScopes = scopeSettings.getNumTags("scope");
+		ofTrueTypeFont legendFont;
+		legendFont.load(legendFontName.c_str(), legendFontSize, true, true);
+		multiScopes.emplace_back(nScopes, scopeArea, legendFont); // Setup the multiScope panel
+		ofTrueTypeFont axesFont;
+		axesFont.load(axesFontName, axesFontSize, true, true);
+		multiScopes.at(m).setAxesFont(axesFont);
+		multiScopes.at(m).setPlotLineWidth(plotLineWidth);
+
+		for (int s = 0; s < nScopes; s++) {
+			// Setup the oscilloscopes
+
+			scopeSettings.pushTag("scope", s);
+
+			float timeWindow = scopeSettings.getValue("timeWindow", 15.f);
+			float samplingFrequency = scopeSettings.getValue("samplingFrequency", 15.f);
+			float yMin = scopeSettings.getValue("yMin", 0.f);
+			float yMax = scopeSettings.getValue("yMax", 0.f);
+			float minYSpan = scopeSettings.getValue("minYSpan", 0.f);
+
+			vector<int> plotIds;
+			vector<string> plotNames;
+			vector<ofColor> plotColors;
+
+			int nPlots = scopeSettings.getNumTags("plot");
+			for (int p = 0; p < nPlots; p++) {
+				scopeSettings.pushTag("plot", p);
+				plotNames.push_back(scopeSettings.getValue("plotName", ofToString(plotId)));
+				plotIds.push_back(scopeSettings.getValue("plotId", plotId++));
+				scopeSettings.pushTag("plotColor");
+				plotColors.push_back(ofColor(
+					scopeSettings.getValue("r", 255),
+					scopeSettings.getValue("g", 255),
+					scopeSettings.getValue("b", 255)
+				));
+				scopeSettings.popTag(); // plotColor
+				scopeSettings.popTag(); // plot p
+			}
+
+			multiScopes.at(m).scopes.at(s).setup(timeWindow, samplingFrequency, plotNames, plotColors); // Setup each oscilloscope panel
+			if (yMin == yMax) {
+				multiScopes.at(m).scopes.at(s).autoscaleY(true, minYSpan);
+			}
+			else {
+				multiScopes.at(m).scopes.at(s).setYLims(pair<float, float>(yMin, yMax));
+			}
+			scopeSettings.popTag(); // scope s
+		}
+
+		scopeSettings.popTag(); // multiScope m
+	}
+	
+	if (plotId == 0) {
+		ofLogNotice() << "FILE: " + filename + "NOT FOUND" << endl;
+	}
+	return multiScopes;
+}
+
+vector<vector<vector<int>>> ofxMultiScope::getPlotIds(string filename)
+{
+
+	vector<vector<vector<int>>> plotIds;
+	int plotId = 0;
+
+	ofxXmlSettings scopeSettings;
+	scopeSettings.loadFile(filename);
+
+	int nMultiScopes = scopeSettings.getNumTags("multiScope");
+	plotIds.resize(nMultiScopes);
+	for (int m = 0; m < nMultiScopes; m++)
+	{
+		scopeSettings.pushTag("multiScope", m);
+		int nScopes = scopeSettings.getNumTags("scope");
+		plotIds.at(m).resize(nScopes);
+		for (int s = 0; s < nScopes; s++) {
+			scopeSettings.pushTag("scope", s);
+			int nPlots = scopeSettings.getNumTags("plot");
+			plotIds.at(m).at(s).resize(nPlots);
+			for (int p = 0; p < nPlots; p++) {
+				scopeSettings.pushTag("plot", p);
+				string plotName = scopeSettings.getValue("plotName", "");
+				int tempPlotId = scopeSettings.getValue("plotId", plotId++);
+				plotIds.at(m).at(s).at(p) = tempPlotId;
+				scopeSettings.popTag(); // plot p
+			}
+			scopeSettings.popTag(); // scope s
+		}
+		scopeSettings.popTag(); // multiScope m
+	}
+
+	if (plotId == 0) {
+		ofLogNotice() << "FILE: " + filename + "NOT FOUND" << endl;
+	}
+	return plotIds;
+}
+
+unordered_map<int, vector<size_t>> ofxMultiScope::getPlotIdIndexes(string filename)
+{
+	vector<vector<vector<int>>> plotIds = getPlotIds(filename);
+	unordered_map<int, vector<size_t>> plotIdIndexes;
+	for (int m = 0; m < plotIds.size(); m++)
+	{
+		for (int s = 0; s < plotIds.at(m).size(); s++)
+		{
+			for (int p = 0; p < plotIds.at(m).at(s).size(); p++) {
+				vector<size_t> indexes;
+				indexes.push_back(m);
+				indexes.push_back(s);
+				indexes.push_back(p);
+				auto result = plotIdIndexes.emplace(plotIds.at(m).at(s).at(p), indexes);
+				if (!result.second)
+				{
+					ofLogWarning() << "Duplicate plot ID found: " << plotIds.at(m).at(s).at(p) << endl;
+				}
+			}
+		}
+	}
+	return plotIdIndexes;
 }

@@ -20,7 +20,7 @@ void ofApp::setup() {
 	float samplingFreqMult = 100;
 	float yScale = 1.; // yScale multiplier
 	float yOffset = 0.; // yOffset from the center of the scope window
-	ofRectangle scopeArea = ofRectangle(ofPoint(0, 0), ofGetWindowSize());
+	ofRectangle scopeArea = ofRectangle(ofPoint(0, 0), ofGetWindowWidth(), ofGetWindowHeight());
 
 	scopeWin = ofxMultiScope(nScopes, scopeArea, legendFont); // Setup the multiScope panel
 

@@ -1,0 +1,4 @@
+ofxOsc
+ofxOscilloscope
+ofxThreadedLogger
+ofxXmlSettings

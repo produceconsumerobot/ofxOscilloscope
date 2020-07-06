@@ -14,6 +14,7 @@
 #define _OFX_OSCILLOSCOPE
 
 #include "ofMain.h"
+#include "ofxXmlSettings.h"
 #include <vector>
 #include <algorithm>
 
@@ -40,7 +41,11 @@ private:
 	ofColor _zeroLineColor;
 	ofColor _backgroundColor;
 	float _plotLineWidth;
+	pair<float, float> _yLims;
+
+
 public:
+
 	// Constructors
 	ofxScopePlot(ofRectangle plotArea,
 		ofColor zeroLineColor=ofColor(240,240,240), ofColor backgroundColor=ofColor(0.,0.,0.,0.),
@@ -87,10 +92,12 @@ public:
 	float getYOffset();
 	pair<float, float> getMinMaxY();
 	void setMinMaxY(pair<float, float> yLims);
+	pair<float, float> getYLims();
 
 	int getNumVariables();
 	ofColor getVariableColor(int i);
 	float getTimeWindow();
+	float getSamplingFrequency();
 };
 
 
@@ -109,7 +116,6 @@ private:
 	ofTrueTypeFont _axesFont;
 	int _legendPadding;
 	int _textSpacer;
-	ofxScopePlot _scopePlot;
 	std::vector<string> _variableNames;
 	ofColor _outlineColor;
 	float _outlineWidth;
@@ -118,6 +124,8 @@ private:
 	float _minYSpan;
 
 public:
+	ofxScopePlot _scopePlot;
+
 	// Constructors
 	ofxOscilloscope(ofRectangle scopeArea, 
 		ofTrueTypeFont legendFont=ofTrueTypeFont(), int legendWidth=100,
@@ -146,6 +154,7 @@ public:
 	// Updating data
 	void updateData(std::vector<float> data); // data[_nVariables] or data[nPoints] iff _nVariables==1
 	void updateData(std::vector<std::vector<float> > data); // data[_nVariables][nPoints]
+	void updateData(size_t variableNum, std::vector<float> data); // data[nPoints]
 	void updateData(float ** data, int nPoints); // ** DEPRECATED ** data[_nVariables][nPoints] 
 	void clearData();	// Sets all data to the most recent value;
 
@@ -159,6 +168,7 @@ public:
 	void setVariableColors(std::vector<ofColor> colors);			// Variable colors
 	void setVariableColors(ofColor colors[], int nColors);			// Variable colors
 
+	float getSamplingFrequency();
 	void setTimeWindow(float timeWindow);		// Duration of displayed data window (seconds)
 	float getTimeWindow();						// Duration of displayed data window (seconds)
 	void setPosition(ofPoint min, ofPoint max);	// Position of the scope panel
@@ -183,7 +193,8 @@ public:
 	float getYOffset();				// yScale of plotted data
 	void autoscaleY(bool autoscale, float minYSpan = 0.f);
 	void setYLims(pair<float,float> yLims);
-	//pair<float, float> getYLims();
+	pair<float, float> getYLims();
+	float getMinYSpan();
 
 	float incrementYScale();		// Change yScale of plotted data
 	float decrementYScale();		// Change yScale of plotted data
@@ -213,7 +224,13 @@ private:
 	ofPoint _max;
 	int _numScopes;
 public:
+
 	std::vector<ofxOscilloscope> scopes;
+
+	static vector<ofxMultiScope> loadScopeSettings(string filename = "ofxOscilloscopeSettings.xml");
+	static vector<vector<vector<int>>> getPlotIds(string filename = "ofxOscilloscopeSettings.xml");
+	static unordered_map<int, vector<size_t>> getPlotIdIndexes(string filename = "ofxOscilloscopeSettings.xml");
+	static bool saveScopeSettings(vector<ofxMultiScope> &multiScopes, string filename = "ofxOscilloscopeSettings.xml");
 
 	// Constructors
 	ofxMultiScope();
