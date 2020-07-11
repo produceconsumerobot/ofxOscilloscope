@@ -24,7 +24,6 @@ public:
 	void gotMessage(ofMessage msg);
 	string ofGetTimestampString(const string& timestampFormat);
 
-	//ofxMultiScope scopeWin;
 	int newPoints;
 	int nScopes;
 	std::vector<std::vector<float> > data;

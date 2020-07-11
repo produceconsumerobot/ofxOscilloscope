@@ -2,6 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
+	ofSetFrameRate(30);
 	ofBackground(255, 255, 255);
 
 	patchboard.loadFile(patchboardFile);
@@ -21,8 +22,6 @@ void ofApp::setup() {
 		cout << "ABORTING: No ofxOscilloscope settings found..." << endl;
 		while(true);
 	}
-
-	//scopeWin = scopeWins.at(0);
 
 	// Allocate space for new data in form data[nVariables][nPoints]
 	const int nVariables = 2;
