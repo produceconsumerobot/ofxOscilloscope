@@ -13,3 +13,4 @@ An example that reads data from an OSC stream and plots it in an oscilloscope wi
   - Change how the oscilloscope is displayed if desired
   - Note that the plotId should match the <output> field in oscInputSettings.xml
   - Reload the settings with 'L'
+- Run
