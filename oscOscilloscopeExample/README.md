@@ -3,6 +3,8 @@ oscOscilloscopeExample
 
 An example that reads data from an OSC stream and plots it in an oscilloscope window. 
 
+![](../assets/oscExample.png | width=400)
+
 ## Basic Usage:
 
 - Edit oscInputSettings.xml
