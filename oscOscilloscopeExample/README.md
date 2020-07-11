@@ -10,7 +10,7 @@ An example that reads data from an OSC stream and plots it in an oscilloscope wi
   - Change the OSC addresses to match the incoming OSC addresses
   - Reload oscInpuSettings by hitting (capital) 'P'
 - Edit ofxOscilloscopeSettings.xml 
-  - Change how the oscilloscope is displayed if desired
+  - If desired, change how the oscilloscope is displayed
   - Note that the plotId should match the <output> field in oscInputSettings.xml
   - Reload the settings with 'L'
 - Run
