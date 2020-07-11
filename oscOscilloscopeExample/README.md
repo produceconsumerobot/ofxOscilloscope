@@ -3,7 +3,7 @@ oscOscilloscopeExample
 
 An example that reads data from an OSC stream and plots it in an oscilloscope window. 
 
-![](../assets/oscExample.png | width=400)
+<img src="./assets/oscExample.png" width="500">
 
 ## Basic Usage:
 
