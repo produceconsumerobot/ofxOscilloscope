@@ -11,6 +11,6 @@ An example that reads data from an OSC stream and plots it in an oscilloscope wi
   - Reload oscInpuSettings by hitting (capital) 'P'
 - Edit ofxOscilloscopeSettings.xml 
   - If desired, change how the oscilloscope is displayed
-  - Note that the plotId should match the <output> field in oscInputSettings.xml
+  - Note that the \<plotId\> should match the \<output\> field in oscInputSettings.xml
   - Reload the settings with 'L'
 - Run
