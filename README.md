@@ -3,6 +3,9 @@ ofxOscilloscope
 
 Multi Oscilloscope addon for openFrameworks.
 
+
+<img src="./assets/oscOscilloscope.png" width="650">
+
 Allows the user to easily add multiple oscilloscope panels each able to plot multiple data streams.
 
 Includes:
