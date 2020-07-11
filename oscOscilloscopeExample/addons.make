@@ -1,3 +1,4 @@
 ofxOsc
-ofxXmlSettings
 ofxOscilloscope
+ofxThreadedLogger
+ofxXmlSettings
