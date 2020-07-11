@@ -1,4 +1,15 @@
 oscOscilloscopeExample
 ===============
 
-An example that reads data from an OSC stream and plots it in an oscilloscope window. This example also shows how to use ofxOscilloscopeSettings.xml to reconfigure how the oscilloscope window is displayed without recompiling the code.
+An example that reads data from an OSC stream and plots it in an oscilloscope window. 
+
+#h1 Usage:
+
+- Edit oscInputSettings.xml
+  - Change the port to listen to your OSC stream 
+  - Change the OSC addresses to match the incoming OSC addresses
+  - Reload oscInpuSettings by hitting (capital) 'P'
+- Edit ofxOscilloscopeSettings.xml 
+  - Change how the oscilloscope is displayed if desired
+  - Note that the plotId should match the <output> field in oscInputSettings.xml
+  - Reload the settings with 'L'
