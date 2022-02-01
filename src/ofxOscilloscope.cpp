@@ -63,7 +63,7 @@ void ofxScopePlot::setup(float timeWindow, float sampFreq, std::vector<ofColor> 
 		_pointsPerWin = floor(_timeWindow * sampFreq); //(sec)
 		_sampFreq = sampFreq;
 		_nVariables = variableColors.size();
-
+		_buffer.clear();
 		for (int i=0; i<_nVariables; i++) {
 			_buffer.push_back(std::vector<float>(_pointsPerWin, 0.));
 		}
