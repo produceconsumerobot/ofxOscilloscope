@@ -5,15 +5,21 @@ void ofApp::setup() {
 	ofSetFrameRate(30);
 	ofBackground(255, 255, 255);
 
-	patchboard.loadFile(patchboardFile);
+	oscPatchboard.loadFile(oscPatchboardFile);
 
-	if (patchboard.settings.input["type"].compare("OSC") != 0)
+	if (oscPatchboard.inputType != "OSC")
 	{
-		cout << "ERROR: Specify OSC as input type in " << patchboardFile << endl;
+		cout << "Reading: oscPatchboard.inputType = " << oscPatchboard.inputType << endl;
+		cout << "ERROR: Specify OSC as input type in " << oscPatchboardFile << endl;
 		while (true);
 	}
-		
-	int port = ofToInt(patchboard.settings.input["port"]);
+	string portStr = oscPatchboard.patchboard.getValue("patchboard:settings:input:port", "");
+	if (portStr == "")
+	{
+		cout << "ERROR: Specify patchboard:settings:input:port in " << oscPatchboardFile << endl;
+		while (true);
+	}
+	int port = ofToInt(portStr);
 	receiver.setup(port);
 	
 	scopeWins = ofxMultiScope::loadScopeSettings();
@@ -48,7 +54,7 @@ void ofApp::update() {
 
 		// Iterate through patchcords to see if we're plotting any of the incoming data
 		// ToDo: Use unordered_map.find()
-		for (auto patch = patchboard.patchcords.begin(); patch != patchboard.patchcords.end(); ++patch)
+		for (auto patch = oscPatchboard.patchcords.begin(); patch != oscPatchboard.patchcords.end(); ++patch)
 		{
 			// ToDo: Handle cases where specific data array indexes go to specific plots
 			string patchAddress = patch->first;
@@ -126,7 +132,7 @@ void ofApp::keyReleased(int key) {
 		plotIdIndexes = ofxMultiScope::getPlotIdIndexes();
 	}
 	if (key == 'P') {
-		patchboard.loadFile(patchboardFile);
+		oscPatchboard.loadFile(oscPatchboardFile);
 		for (int w = 0; w < scopeWins.size(); w++) {
 			scopeWins.at(w).clearData();
 		}

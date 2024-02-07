@@ -58,11 +58,14 @@
     <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\osc\OscTypes.cpp">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\patchboard.cpp">
-      <Filter>addons\ofxOscilloscope\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\ofxThreadedLogger\src\ofxThreadedLogger.cpp">
       <Filter>addons\ofxThreadedLogger\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ofxPatchboard\Patchboard\src\PatchboardBase.cpp">
+      <Filter>addons\ofxOscilloscope\ofxPatchboard\Patchboard\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ofxPatchboard\Patchboard\src\PatchboardXml.cpp">
+      <Filter>addons\ofxOscilloscope\ofxPatchboard\Patchboard\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -116,6 +119,15 @@
     </Filter>
     <Filter Include="addons\ofxThreadedLogger\src">
       <UniqueIdentifier>{e707b346-8193-4a46-bd85-c57af54ec417}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOscilloscope\ofxPatchboard">
+      <UniqueIdentifier>{a9774640-7a6f-415b-beef-1bb116f0df6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOscilloscope\ofxPatchboard\Patchboard">
+      <UniqueIdentifier>{202c47d7-ce35-4538-8703-20f065b1e1bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOscilloscope\ofxPatchboard\Patchboard\src">
+      <UniqueIdentifier>{49f5ccaf-7240-4837-b1fb-901152fb7521}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -191,11 +203,14 @@
     <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\OscTypes.h">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\patchboard.h">
-      <Filter>addons\ofxOscilloscope\src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\ofxThreadedLogger\src\ofxThreadedLogger.h">
       <Filter>addons\ofxThreadedLogger\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ofxPatchboard\Patchboard\src\PatchboardBase.h">
+      <Filter>addons\ofxOscilloscope\ofxPatchboard\Patchboard\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ofxPatchboard\Patchboard\src\PatchboardXml.h">
+      <Filter>addons\ofxOscilloscope\ofxPatchboard\Patchboard\src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
