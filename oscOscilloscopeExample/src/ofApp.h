@@ -3,7 +3,7 @@
 #include "ofMain.h"
 #include "ofxOscilloscope.h"
 #include "ofxOsc.h"
-#include "patchboard.h"
+#include "PatchboardXml.h"
 #include "ofxThreadedLogger.h"
 
 class ofApp : public ofBaseApp {
@@ -39,8 +39,8 @@ public:
 	bool autoscaleY = false;
 
 	ofxOscReceiver receiver;
-	string patchboardFile = "oscInputSettings.xml";
-	Patchboard patchboard;
+	string oscPatchboardFile = "oscInputSettings.xml";
+	PatchboardXml oscPatchboard;
 
 	vector<ofxMultiScope> scopeWins;
 	unordered_map<int, vector<size_t>> plotIdIndexes;
