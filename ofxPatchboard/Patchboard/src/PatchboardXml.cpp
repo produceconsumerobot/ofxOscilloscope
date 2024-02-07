@@ -58,7 +58,7 @@ PatchboardBase::ReturnCode PatchboardXml::loadFile(const std::string &patchboard
 			_lastErrMsg = MSG_TAG_NOT_FOUND + tag;
 			return ReturnCode::ERR_TAG_NOT_FOUND;
 		}
-		inputType = val;
+		outputType = val;
 
 		patchboard.popTag(); // pop output
 		patchboard.popTag(); // pop settings
