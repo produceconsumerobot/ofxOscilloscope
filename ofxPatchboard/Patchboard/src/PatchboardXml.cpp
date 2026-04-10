@@ -1,5 +1,5 @@
 #include "PatchboardXml.h"
-
+using namespace std;
 PatchboardBase::ReturnCode PatchboardXml::loadFile(const std::string &patchboardFile)
 {
 	string _filename = patchboardFile; // ToDo: Consider if _filename should be class member

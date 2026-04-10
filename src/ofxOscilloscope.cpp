@@ -1134,7 +1134,7 @@ string ofxOscilloscope::getVariableName(int i) {
 		return _variableNames.at(i);
 	} else {
 		fprintf(stderr, "ERROR - getVariableName: uninitialized or invalid index");
-		return NULL;
+		return "";
 	}
 }
 
@@ -1594,10 +1594,10 @@ vector<vector<vector<int>>> ofxMultiScope::getPlotIds(string filename)
 	return plotIds;
 }
 
-unordered_map<int, vector<size_t>> ofxMultiScope::getPlotIdIndexes(string filename)
+std::unordered_map<int, vector<size_t>> ofxMultiScope::getPlotIdIndexes(string filename)
 {
 	vector<vector<vector<int>>> plotIds = getPlotIds(filename);
-	unordered_map<int, vector<size_t>> plotIdIndexes;
+	std::unordered_map<int, vector<size_t>> plotIdIndexes;
 	for (int m = 0; m < plotIds.size(); m++)
 	{
 		for (int s = 0; s < plotIds.at(m).size(); s++)
