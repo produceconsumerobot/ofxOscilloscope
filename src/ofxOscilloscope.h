@@ -229,7 +229,7 @@ public:
 
 	static vector<ofxMultiScope> loadScopeSettings(string filename = "ofxOscilloscopeSettings.xml");
 	static vector<vector<vector<int>>> getPlotIds(string filename = "ofxOscilloscopeSettings.xml");
-	static unordered_map<int, vector<size_t>> getPlotIdIndexes(string filename = "ofxOscilloscopeSettings.xml");
+	static std::unordered_map<int, vector<size_t>> getPlotIdIndexes(string filename = "ofxOscilloscopeSettings.xml");
 	static bool saveScopeSettings(vector<ofxMultiScope> &multiScopes, string filename = "ofxOscilloscopeSettings.xml");
 
 	// Constructors
